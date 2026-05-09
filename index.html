@@ -1,196 +1,58 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+function doPost(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = JSON.parse(e.postData.contents);
 
-<title>DKJ Finance</title>
+  let sheet;
 
-<style>
-body{
-  font-family:Arial;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-  padding:20px;
+  if (data.tipe === "pemasukan") {
+    sheet = ss.getSheetByName("PEMASUKAN");
+    sheet.appendRow([
+      new Date(),
+      data.penginput || "",
+      data.sumber || "",
+      data.jenisPemasukan || "",
+      Number(data.cash || 0),
+      Number(data.online || 0),
+      Number(data.total || 0),
+      data.catatan || "",
+      data.foto || ""
+    ]);
+  }
+
+  if (data.tipe === "pengeluaran") {
+    sheet = ss.getSheetByName("PENGELUARAN");
+    sheet.appendRow([
+      new Date(),
+      data.penginput || "",
+      data.cabang || "",
+      data.kategori || "",
+      data.namaBarang || "",
+      Number(data.cash || 0),
+      Number(data.online || 0),
+      Number(data.total || 0),
+      data.sumberUang || "",
+      data.catatan || "",
+      data.foto || ""
+    ]);
+  }
+
+  if (data.tipe === "utang") {
+    sheet = ss.getSheetByName("UTANG");
+    sheet.appendRow([
+      new Date(),
+      data.namaUtang || "",
+      data.jenisTransaksi || "",
+      Number(data.tambahanUtang || 0),
+      Number(data.pembayaran || 0),
+      Number(data.sisaUtang || 0),
+      data.jatuhTempo || "",
+      data.status || "",
+      data.catatan || "",
+      data.foto || ""
+    ]);
+  }
+
+  return ContentService
+    .createTextOutput("success")
+    .setMimeType(ContentService.MimeType.TEXT);
 }
-
-.box{
-  max-width:500px;
-  margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-
-h1{
-  text-align:center;
-  color:#ff4d6d;
-  margin-bottom:5px;
-}
-
-.sub{
-  text-align:center;
-  color:gray;
-  margin-bottom:20px;
-}
-
-label{
-  display:block;
-  margin-top:12px;
-  font-weight:bold;
-  color:#444;
-}
-
-select,input,textarea{
-  width:100%;
-  padding:12px;
-  margin-top:5px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:14px;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  margin-top:20px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#ff4d6d,#ff758c);
-  color:white;
-  font-weight:bold;
-  font-size:16px;
-}
-
-#status{
-  text-align:center;
-  margin-top:15px;
-  font-weight:bold;
-}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-
-<h1>💸 DKJ FINANCE</h1>
-<div class="sub">Sistem Keuangan DKJ Group</div>
-
-<label>📌 Jenis Transaksi</label>
-<select id="tipe">
-  <option value="pemasukan">💰 Pemasukan</option>
-  <option value="pengeluaran">🛒 Pengeluaran</option>
-  <option value="utang">📋 Hutang</option>
-</select>
-
-<label>👤 Nama Penginput</label>
-<input type="text" id="penginput" placeholder="Nama penginput">
-
-<label>🏢 Cabang / Sumber</label>
-<select id="cabang">
-  <option>DEKAJE METRO</option>
-  <option>DEKAJE WAY JEPARA</option>
-  <option>MIE RAWUH</option>
-  <option>FOTIVA</option>
-  <option>PRIBADI</option>
-  <option>LAINNYA</option>
-</select>
-
-<label>📂 Kategori</label>
-<select id="kategori">
-  <option>Omzet Harian</option>
-  <option>Belanja Bahan</option>
-  <option>Operasional</option>
-  <option>Rumah Tangga</option>
-  <option>Pribadi Owner</option>
-  <option>Bayar Hutang</option>
-  <option>Tambah Hutang</option>
-  <option>Lainnya</option>
-</select>
-
-<label>💳 Sumber Dana</label>
-<select id="sumberUang">
-  <option>Kas Cabang</option>
-  <option>Uang Pribadi Owner</option>
-  <option>Online Cair</option>
-  <option>Hutang / Bon</option>
-  <option>Lainnya</option>
-</select>
-
-<label>💵 Cash</label>
-<input type="number" id="cash" placeholder="Nominal cash">
-
-<label>📲 Online / Transfer</label>
-<input type="number" id="online" placeholder="Nominal online / transfer">
-
-<label>🧾 Total</label>
-<input type="number" id="total" placeholder="Total transaksi">
-
-<label>📝 Catatan</label>
-<textarea id="catatan" placeholder="Contoh: bensin motor Rawuh dibayar pakai uang pribadi owner"></textarea>
-
-<label>📸 Upload Foto Nota / Bukti</label>
-<input type="file" accept="image/*" capture="environment">
-
-<button onclick="kirimData()">🚀 Kirim Data</button>
-
-<p id="status"></p>
-
-</div>
-
-<script>
-function kirimData(){
-
-  document.getElementById("status").innerText = "⏳ Mengirim data...";
-
-  const data = {
-    tipe: document.getElementById("tipe").value,
-
-    penginput: document.getElementById("penginput").value,
-
-    sumber: document.getElementById("cabang").value,
-    cabang: document.getElementById("cabang").value,
-
-    kategori: document.getElementById("kategori").value,
-    jenisPemasukan: document.getElementById("kategori").value,
-    namaBarang: document.getElementById("kategori").value,
-
-    cash: document.getElementById("cash").value || 0,
-    online: document.getElementById("online").value || 0,
-    total: document.getElementById("total").value || 0,
-
-    jumlah: document.getElementById("total").value || 0,
-    satuan: "-",
-
-    sumberUang: document.getElementById("sumberUang").value,
-
-    catatan: document.getElementById("catatan").value,
-
-    foto: "Upload Menyusul",
-
-    namaUtang: document.getElementById("cabang").value,
-    jenisTransaksi: document.getElementById("kategori").value,
-    tambahanUtang: document.getElementById("cash").value || 0,
-    pembayaran: document.getElementById("online").value || 0,
-    sisaUtang: document.getElementById("total").value || 0,
-    jatuhTempo: "-",
-    status: "Aktif"
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbxPBMSGLb-HV9yk7LPWb5HL1IKFYzaj5dL5DYJbHFPHyscKHFchso9UYvsxkTvbawxvdA/exec",{
-    method:"POST",
-    body:JSON.stringify(data)
-  })
-  .then(()=>{
-    document.getElementById("status").innerText = "✅ Data berhasil dikirim";
-  })
-  .catch(()=>{
-    document.getElementById("status").innerText = "❌ Gagal kirim";
-  });
-
-}
-</script>
-
-</body>
-</html>
