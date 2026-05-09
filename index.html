@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>KEUANGAN DKJ GROUP</title>
+<title>DKJ Finance</title>
 
 <style>
 
 body{
   font-family:Arial;
-  background:linear-gradient(135deg,#1e3c72,#2a5298);
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
   padding:20px;
 }
 
@@ -18,41 +18,60 @@ body{
   max-width:500px;
   margin:auto;
   background:white;
-  padding:20px;
-  border-radius:15px;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
-h2{
+h1{
   text-align:center;
-  color:#1e3c72;
+  color:#ff4d6d;
+  margin-bottom:5px;
+}
+
+.sub{
+  text-align:center;
+  color:gray;
+  margin-bottom:20px;
 }
 
 label{
-  margin-top:12px;
   display:block;
+  margin-top:12px;
   font-weight:bold;
+  color:#444;
 }
 
-select,input,textarea,button{
+select,input,textarea{
   width:100%;
-  margin-top:5px;
   padding:12px;
-  border-radius:10px;
-  border:1px solid #ccc;
+  margin-top:5px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:14px;
 }
 
 button{
-  background:#1e3c72;
-  color:white;
+  width:100%;
+  padding:14px;
+  margin-top:20px;
   border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ff4d6d,#ff758c);
+  color:white;
   font-weight:bold;
-  margin-top:15px;
+  font-size:16px;
 }
 
 #status{
   text-align:center;
   margin-top:15px;
   font-weight:bold;
+}
+
+.icon{
+  font-size:18px;
+  margin-right:5px;
 }
 
 </style>
@@ -62,19 +81,20 @@ button{
 
 <div class="box">
 
-<h2>KEUANGAN DKJ GROUP</h2>
+<h1>💸 DKJ FINANCE</h1>
+<div class="sub">Sistem Keuangan DKJ Group</div>
 
-<label>Jenis Transaksi</label>
+<label>📌 Jenis Transaksi</label>
 <select id="tipe">
-<option value="pemasukan">Pemasukan</option>
-<option value="pengeluaran">Pengeluaran</option>
-<option value="utang">Utang</option>
+<option value="pemasukan">💰 Pemasukan</option>
+<option value="pengeluaran">🛒 Pengeluaran</option>
+<option value="utang">📋 Hutang</option>
 </select>
 
-<label>Nama Penginput</label>
-<input type="text" id="penginput" placeholder="Nama Penginput">
+<label>👤 Nama Penginput</label>
+<input type="text" id="penginput" placeholder="Nama">
 
-<label>Cabang</label>
+<label>🏢 Cabang</label>
 <select id="cabang">
 <option>DEKAJE METRO</option>
 <option>DEKAJE WAY JEPARA</option>
@@ -83,37 +103,41 @@ button{
 <option>PRIBADI</option>
 </select>
 
-<label>Kategori</label>
+<label>📂 Kategori</label>
 <select id="kategori">
-<option>Omzet Harian</option>
-<option>Belanja Harian</option>
-<option>Supplier</option>
-<option>Gas</option>
-<option>Listrik</option>
-<option>Gaji</option>
-<option>Rumah Tangga</option>
-<option>Pribadi Owner</option>
-<option>Bayar Hutang</option>
-<option>Tambah Hutang</option>
-<option>Lainnya</option>
+
+<option>💰 Omzet Harian</option>
+
+<option>🛒 Belanja Bahan</option>
+
+<option>🏠 Rumah Tangga</option>
+
+<option>👤 Pribadi Owner</option>
+
+<option>💳 Bayar Hutang</option>
+
+<option>📋 Tambah Hutang</option>
+
+<option>📦 Lainnya</option>
+
 </select>
 
-<label>Cash</label>
+<label>💵 Cash</label>
 <input type="number" id="cash" placeholder="Cash">
 
-<label>Online / Transfer</label>
+<label>📲 Online / Transfer</label>
 <input type="number" id="online" placeholder="Online">
 
-<label>Total</label>
+<label>🧾 Total</label>
 <input type="number" id="total" placeholder="Total">
 
-<label>Catatan</label>
-<textarea id="catatan" placeholder="Catatan"></textarea>
+<label>📝 Catatan</label>
+<textarea id="catatan" placeholder="Catatan tambahan"></textarea>
 
-<label>Upload Foto Nota / Bukti</label>
-<input type="file" id="foto" accept="image/*" capture="environment">
+<label>📸 Upload Foto Nota</label>
+<input type="file" accept="image/*" capture="environment">
 
-<button onclick="kirimData()">Kirim Data</button>
+<button onclick="kirimData()">🚀 Kirim Data</button>
 
 <p id="status"></p>
 
@@ -123,7 +147,7 @@ button{
 
 function kirimData(){
 
-document.getElementById("status").innerText = "Mengirim data...";
+document.getElementById("status").innerText = "⏳ Mengirim data...";
 
 const data = {
 
@@ -155,7 +179,7 @@ const data = {
 
   catatan: document.getElementById("catatan").value,
 
-  foto: "Upload Manual Dulu",
+  foto: "Upload Menyusul",
 
   namaUtang: document.getElementById("kategori").value,
 
