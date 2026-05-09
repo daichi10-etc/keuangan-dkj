@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keuangan DKJ Group</title>
+
+<title>KEUANGAN DKJ GROUP</title>
 
 <style>
+
 body{
   font-family:Arial;
-  background:#f2f4f7;
+  background:linear-gradient(135deg,#1e3c72,#2a5298);
   padding:20px;
 }
 
@@ -17,18 +19,26 @@ body{
   margin:auto;
   background:white;
   padding:20px;
-  border-radius:12px;
+  border-radius:15px;
 }
 
 h2{
   text-align:center;
+  color:#1e3c72;
+}
+
+label{
+  margin-top:12px;
+  display:block;
+  font-weight:bold;
 }
 
 select,input,textarea,button{
   width:100%;
-  margin-top:10px;
+  margin-top:5px;
   padding:12px;
-  border-radius:8px;
+  border-radius:10px;
+  border:1px solid #ccc;
 }
 
 button{
@@ -36,12 +46,15 @@ button{
   color:white;
   border:none;
   font-weight:bold;
+  margin-top:15px;
 }
 
 #status{
-  margin-top:10px;
   text-align:center;
+  margin-top:15px;
+  font-weight:bold;
 }
+
 </style>
 </head>
 
@@ -51,27 +64,54 @@ button{
 
 <h2>KEUANGAN DKJ GROUP</h2>
 
+<label>Jenis Transaksi</label>
 <select id="tipe">
 <option value="pemasukan">Pemasukan</option>
 <option value="pengeluaran">Pengeluaran</option>
 <option value="utang">Utang</option>
 </select>
 
+<label>Nama Penginput</label>
 <input type="text" id="penginput" placeholder="Nama Penginput">
 
-<input type="text" id="cabang" placeholder="Cabang / Sumber">
+<label>Cabang</label>
+<select id="cabang">
+<option>DEKAJE METRO</option>
+<option>DEKAJE WAY JEPARA</option>
+<option>MIE RAWUH</option>
+<option>FOTIVA</option>
+<option>PRIBADI</option>
+</select>
 
-<input type="text" id="kategori" placeholder="Kategori / Jenis">
+<label>Kategori</label>
+<select id="kategori">
+<option>Omzet Harian</option>
+<option>Belanja Harian</option>
+<option>Supplier</option>
+<option>Gas</option>
+<option>Listrik</option>
+<option>Gaji</option>
+<option>Rumah Tangga</option>
+<option>Pribadi Owner</option>
+<option>Bayar Hutang</option>
+<option>Tambah Hutang</option>
+<option>Lainnya</option>
+</select>
 
+<label>Cash</label>
 <input type="number" id="cash" placeholder="Cash">
 
+<label>Online / Transfer</label>
 <input type="number" id="online" placeholder="Online">
 
+<label>Total</label>
 <input type="number" id="total" placeholder="Total">
 
+<label>Catatan</label>
 <textarea id="catatan" placeholder="Catatan"></textarea>
 
-<input type="text" id="foto" placeholder="Link Foto / Nota">
+<label>Upload Foto Nota / Bukti</label>
+<input type="file" id="foto" accept="image/*" capture="environment">
 
 <button onclick="kirimData()">Kirim Data</button>
 
@@ -83,41 +123,74 @@ button{
 
 function kirimData(){
 
+document.getElementById("status").innerText = "Mengirim data...";
+
 const data = {
+
   tipe: document.getElementById("tipe").value,
+
   penginput: document.getElementById("penginput").value,
+
   sumber: document.getElementById("cabang").value,
+
   cabang: document.getElementById("cabang").value,
+
   kategori: document.getElementById("kategori").value,
+
   jenisPemasukan: document.getElementById("kategori").value,
+
   namaBarang: document.getElementById("kategori").value,
+
   cash: document.getElementById("cash").value,
+
   online: document.getElementById("online").value,
+
   total: document.getElementById("total").value,
+
   jumlah: document.getElementById("cash").value,
+
   satuan: "-",
+
   sumberUang: "Kas",
+
   catatan: document.getElementById("catatan").value,
-  foto: document.getElementById("foto").value,
+
+  foto: "Upload Manual Dulu",
 
   namaUtang: document.getElementById("kategori").value,
+
   jenisTransaksi: document.getElementById("kategori").value,
+
   tambahanUtang: document.getElementById("cash").value,
+
   pembayaran: document.getElementById("online").value,
+
   sisaUtang: document.getElementById("total").value,
+
   jatuhTempo: "-",
+
   status: "Aktif"
+
 };
 
 fetch("https://script.google.com/macros/s/AKfycbxPBMSGLb-HV9yk7LPWb5HL1IKFYzaj5dL5DYJbHFPHyscKHFchso9UYvsxkTvbawxvdA/exec",{
+
   method:"POST",
+
   body:JSON.stringify(data)
+
 })
+
 .then(()=>{
-  document.getElementById("status").innerText="✅ Data berhasil dikirim";
+
+  document.getElementById("status").innerText = "✅ Data berhasil dikirim";
+
 })
+
 .catch(()=>{
-  document.getElementById("status").innerText="❌ Gagal kirim";
+
+  document.getElementById("status").innerText = "❌ Gagal kirim";
+
 });
 
 }
