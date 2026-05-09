@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keuangan DKJ Group</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f2f4f7;
+  padding:20px;
+}
+
+.box{
+  max-width:500px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+}
+
+h2{
+  text-align:center;
+}
+
+select,input,textarea,button{
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  border-radius:8px;
+}
+
+button{
+  background:#1e3c72;
+  color:white;
+  border:none;
+  font-weight:bold;
+}
+
+#status{
+  margin-top:10px;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>KEUANGAN DKJ GROUP</h2>
+
+<select id="tipe">
+<option value="pemasukan">Pemasukan</option>
+<option value="pengeluaran">Pengeluaran</option>
+<option value="utang">Utang</option>
+</select>
+
+<input type="text" id="penginput" placeholder="Nama Penginput">
+
+<input type="text" id="cabang" placeholder="Cabang / Sumber">
+
+<input type="text" id="kategori" placeholder="Kategori / Jenis">
+
+<input type="number" id="cash" placeholder="Cash">
+
+<input type="number" id="online" placeholder="Online">
+
+<input type="number" id="total" placeholder="Total">
+
+<textarea id="catatan" placeholder="Catatan"></textarea>
+
+<input type="text" id="foto" placeholder="Link Foto / Nota">
+
+<button onclick="kirimData()">Kirim Data</button>
+
+<p id="status"></p>
+
+</div>
+
+<script>
+
+function kirimData(){
+
+const data = {
+  tipe: document.getElementById("tipe").value,
+  penginput: document.getElementById("penginput").value,
+  sumber: document.getElementById("cabang").value,
+  cabang: document.getElementById("cabang").value,
+  kategori: document.getElementById("kategori").value,
+  jenisPemasukan: document.getElementById("kategori").value,
+  namaBarang: document.getElementById("kategori").value,
+  cash: document.getElementById("cash").value,
+  online: document.getElementById("online").value,
+  total: document.getElementById("total").value,
+  jumlah: document.getElementById("cash").value,
+  satuan: "-",
+  sumberUang: "Kas",
+  catatan: document.getElementById("catatan").value,
+  foto: document.getElementById("foto").value,
+
+  namaUtang: document.getElementById("kategori").value,
+  jenisTransaksi: document.getElementById("kategori").value,
+  tambahanUtang: document.getElementById("cash").value,
+  pembayaran: document.getElementById("online").value,
+  sisaUtang: document.getElementById("total").value,
+  jatuhTempo: "-",
+  status: "Aktif"
+};
+
+fetch("https://script.google.com/macros/s/AKfycbxPBMSGLb-HV9yk7LPWb5HL1IKFYzaj5dL5DYJbHFPHyscKHFchso9UYvsxkTvbawxvdA/exec",{
+  method:"POST",
+  body:JSON.stringify(data)
+})
+.then(()=>{
+  document.getElementById("status").innerText="✅ Data berhasil dikirim";
+})
+.catch(()=>{
+  document.getElementById("status").innerText="❌ Gagal kirim";
+});
+
+}
+
+</script>
+
+</body>
+</html>
