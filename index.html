@@ -12,429 +12,229 @@
 
 <title>DEKAJE GROUP FINANCE</title>
 
-
 <style>
 
 *{
   box-sizing:border-box;
 }
 
-
 body{
-
   margin:0;
   padding:20px;
-
   font-family:Arial,sans-serif;
-
-  background:
-    linear-gradient(
-      135deg,
-      #ff9a9e,
-      #fad0c4
-    );
-
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
   min-height:100vh;
-
 }
-
 
 .container{
-
   max-width:560px;
   margin:auto;
-
 }
-
 
 .box{
-
   background:#fff;
-
   padding:24px;
-
   border-radius:22px;
-
-  box-shadow:
-    0 10px 30px
-    rgba(0,0,0,.15);
-
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
-
 
 h1{
-
   text-align:center;
-
   margin:0;
-
   color:#ff4d6d;
-
   font-size:26px;
-
 }
-
 
 .sub{
-
   text-align:center;
-
   color:#777;
-
-  margin:
-    6px 0 24px;
-
+  margin:6px 0 24px;
   font-size:14px;
-
 }
-
 
 .section{
-
   margin-top:22px;
-
   padding-top:18px;
-
-  border-top:
-    1px solid #eee;
-
+  border-top:1px solid #eee;
 }
-
 
 .section-title{
-
   font-size:18px;
-
   font-weight:bold;
-
   color:#333;
-
   margin-bottom:12px;
-
 }
-
 
 label{
-
   display:block;
-
   margin-top:12px;
-
   margin-bottom:5px;
-
   font-weight:bold;
-
   color:#444;
-
   font-size:14px;
-
 }
-
 
 input,
 select,
 textarea{
-
   width:100%;
-
   padding:13px;
-
-  border:
-    1px solid #ddd;
-
+  border:1px solid #ddd;
   border-radius:12px;
-
   font-size:15px;
-
   background:#fff;
-
   outline:none;
-
 }
-
 
 input:focus,
 select:focus,
 textarea:focus{
-
   border-color:#ff6b81;
-
 }
-
 
 input[type="number"]{
-
   text-align:right;
-
 }
-
 
 textarea{
-
   min-height:80px;
-
   resize:vertical;
-
 }
-
 
 select:disabled{
-
   background:#f3f3f3;
-
   color:#666;
-
 }
-
 
 .user-info{
-
   margin-top:8px;
-
   padding:10px 12px;
-
   background:#f8f8f8;
-
   border-radius:10px;
-
   font-size:12px;
-
   color:#777;
-
 }
-
 
 .summary{
-
   margin-top:18px;
-
   padding:16px;
-
   border-radius:15px;
-
   background:#f8f8f8;
-
 }
-
 
 .summary-row{
-
   display:flex;
-
   justify-content:space-between;
-
   gap:15px;
-
   padding:7px 0;
-
   color:#555;
-
 }
-
 
 .summary-row strong{
-
   color:#222;
-
 }
-
 
 .summary-total{
-
-  border-top:
-    1px solid #ddd;
-
+  border-top:1px solid #ddd;
   margin-top:8px;
-
   padding-top:12px;
-
   font-size:18px;
-
 }
-
 
 .expense-item{
-
-  border:
-    1px solid #e5e5e5;
-
+  border:1px solid #e5e5e5;
   border-radius:15px;
-
   padding:14px;
-
   margin-top:12px;
-
   background:#fafafa;
-
 }
-
 
 .expense-head{
-
   display:flex;
-
   justify-content:space-between;
-
   align-items:center;
-
   margin-bottom:5px;
-
 }
-
 
 .expense-number{
-
   font-weight:bold;
-
   color:#444;
-
 }
-
 
 .remove-btn{
-
   width:auto;
-
   margin:0;
-
   padding:6px 10px;
-
   border:none;
-
   border-radius:8px;
-
   background:#eee;
-
   color:#777;
-
   font-size:12px;
-
 }
-
 
 .add-btn{
-
   width:100%;
-
   margin-top:12px;
-
   padding:12px;
-
-  border:
-    2px dashed #ff758c;
-
+  border:2px dashed #ff758c;
   border-radius:12px;
-
   background:#fff;
-
   color:#ff4d6d;
-
   font-weight:bold;
-
   font-size:14px;
-
+  cursor:pointer;
 }
-
 
 .main-btn{
-
   width:100%;
-
   margin-top:22px;
-
   padding:15px;
-
   border:none;
-
   border-radius:14px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #ff4d6d,
-      #ff758c
-    );
-
+  background:linear-gradient(135deg,#ff4d6d,#ff758c);
   color:#fff;
-
   font-size:16px;
-
   font-weight:bold;
-
   cursor:pointer;
-
 }
-
 
 .main-btn:disabled{
-
   background:#aaa;
-
   cursor:not-allowed;
-
 }
-
 
 .status{
-
   display:none;
-
   margin-top:15px;
-
   padding:13px;
-
   border-radius:12px;
-
   text-align:center;
-
   font-weight:bold;
-
 }
-
 
 .status.success{
-
   display:block;
-
   background:#e8f8ed;
-
   color:#188542;
-
 }
-
 
 .status.error{
-
   display:block;
-
   background:#fdecec;
-
   color:#c62828;
-
 }
-
 
 .status.loading{
-
   display:block;
-
   background:#fff5e5;
-
   color:#a86600;
-
 }
 
-
 .note{
-
   margin-top:12px;
-
   text-align:center;
-
   color:#888;
-
   font-size:12px;
-
 }
 
 </style>
@@ -460,14 +260,14 @@ Laporan Keuangan Harian
 </div>
 
 
-<!-- ================================
+
+<!-- =====================================
      PENGINPUT
-================================ -->
+===================================== -->
 
 <label>
 👤 Nama Penginput
 </label>
-
 
 <select id="penginput">
 
@@ -486,16 +286,18 @@ Laporan Keuangan Harian
 
 
 
-<!-- ================================
+<!-- =====================================
      CABANG
-================================ -->
+===================================== -->
 
 <label>
 🏢 Cabang
 </label>
 
-
-<select id="cabang" disabled>
+<select
+  id="cabang"
+  disabled
+>
 
   <option value="">
     Pilih nama terlebih dahulu
@@ -505,12 +307,11 @@ Laporan Keuangan Harian
 
 
 
-<!-- ================================
+<!-- =====================================
      PENDAPATAN
-================================ -->
+===================================== -->
 
 <div class="section">
-
 
 <div class="section-title">
 💰 Pendapatan
@@ -527,7 +328,7 @@ Laporan Keuangan Harian
   min="0"
   inputmode="numeric"
   placeholder="0"
-/>
+>
 
 
 <label>
@@ -540,7 +341,7 @@ Laporan Keuangan Harian
   min="0"
   inputmode="numeric"
   placeholder="0"
-/>
+>
 
 
 <label>
@@ -553,7 +354,7 @@ Laporan Keuangan Harian
   min="0"
   inputmode="numeric"
   placeholder="0"
-/>
+>
 
 
 <label>
@@ -566,7 +367,7 @@ Laporan Keuangan Harian
   min="0"
   inputmode="numeric"
   placeholder="0"
-/>
+>
 
 
 <label>
@@ -579,7 +380,7 @@ Laporan Keuangan Harian
   min="0"
   inputmode="numeric"
   placeholder="0"
-/>
+>
 
 
 <label>
@@ -592,11 +393,10 @@ Laporan Keuangan Harian
   min="0"
   inputmode="numeric"
   placeholder="0"
-/>
+>
 
 
 <div class="summary">
-
 
 <div class="summary-row summary-total">
 
@@ -610,19 +410,17 @@ Rp0
 
 </div>
 
-
 </div>
 
 </div>
 
 
 
-<!-- ================================
+<!-- =====================================
      PENGELUARAN
-================================ -->
+===================================== -->
 
 <div class="section">
-
 
 <div class="section-title">
 💸 Pengeluaran Operasional
@@ -702,31 +500,28 @@ Rp0
 
 
 
-<!-- ================================
+<!-- =====================================
      CATATAN
-================================ -->
+===================================== -->
 
 <div class="section">
-
 
 <label>
 📝 Catatan
 </label>
-
 
 <textarea
   id="catatan"
   placeholder="Catatan tambahan (opsional)"
 ></textarea>
 
-
 </div>
 
 
 
-<!-- ================================
+<!-- =====================================
      KIRIM
-================================ -->
+===================================== -->
 
 <button
   type="button"
@@ -747,10 +542,7 @@ Rp0
 
 
 <div class="note">
-
-Pastikan angka sudah benar
-sebelum mengirim laporan.
-
+Pastikan angka sudah benar sebelum mengirim laporan.
 </div>
 
 
@@ -772,7 +564,7 @@ const SCRIPT_URL =
 
 
 /* =========================================================
-   DATA MASTER
+   MASTER DATA
 ========================================================= */
 
 let masterCabang = [];
@@ -788,7 +580,7 @@ let sedangMengirim = false;
 
 
 /* =========================================================
-   FORMAT RUPIAH
+   RUPIAH
 ========================================================= */
 
 function rupiah(angka){
@@ -807,7 +599,7 @@ function rupiah(angka){
 
 
 /* =========================================================
-   AMBIL ANGKA
+   ANGKA
 ========================================================= */
 
 function angka(id){
@@ -988,9 +780,11 @@ function pilihUser(){
     userTerpilih.role;
 
 
-  /* -----------------------------------------
+
+  /* =======================================
      OWNER
-  ----------------------------------------- */
+     OWNER SAJA YANG BOLEH SEMUA CABANG
+  ======================================= */
 
   if(
     userTerpilih.role === "OWNER"
@@ -1016,18 +810,27 @@ function pilihUser(){
       false;
 
 
+    userInfo.innerText =
+      "Role: OWNER • Semua cabang";
+
     return;
 
   }
 
 
-  /* -----------------------------------------
-     KASIR
-  ----------------------------------------- */
+
+  /* =======================================
+     PIC / KASIR
+
+     ROLE TIDAK MENENTUKAN JUMLAH CABANG.
+     MASTER.CABANG YANG MENENTUKAN AKSES.
+  ======================================= */
 
   const daftarCabang =
     userTerpilih.cabang || [];
 
+
+  /* 1 CABANG */
 
   if(
     daftarCabang.length === 1
@@ -1059,6 +862,9 @@ function pilihUser(){
   }
 
 
+
+  /* 2+ CABANG */
+
   if(
     daftarCabang.length > 1
   ){
@@ -1079,6 +885,14 @@ function pilihUser(){
     );
 
 
+    /*
+      INI SENGAJA FALSE / AKTIF.
+
+      PIC DAN KASIR YANG PUNYA
+      LEBIH DARI SATU CABANG
+      BOLEH MEMILIH CABANG.
+    */
+
     cabangSelect.disabled =
       false;
 
@@ -1089,6 +903,7 @@ function pilihUser(){
       " • " +
       daftarCabang.length +
       " cabang";
+
 
     return;
 
@@ -1102,7 +917,7 @@ function pilihUser(){
 
 
 /* =========================================================
-   OPTION CABANG
+   TAMBAH OPTION CABANG
 ========================================================= */
 
 function tambahOptionCabang(
@@ -1156,7 +971,7 @@ function resetCabang(){
 
 
 /* =========================================================
-   HITUNG TOTAL PENDAPATAN
+   HITUNG PENDAPATAN
 ========================================================= */
 
 function hitungPendapatan(){
@@ -1514,9 +1329,9 @@ async function kirimLaporan(){
   }
 
 
-  /* -----------------------------------------
-     CEK AKSES FRONTEND
-  ----------------------------------------- */
+  /* =======================================
+     CEK AKSES USER
+  ======================================= */
 
   if(
     userTerpilih.role !== "OWNER"
@@ -1673,9 +1488,10 @@ async function kirimLaporan(){
 
   try{
 
-    /* ---------------------------------------
-       1. PENDAPATAN
-    --------------------------------------- */
+
+    /* =====================================
+       PENDAPATAN
+    ===================================== */
 
     const pendapatanData = {
 
@@ -1732,9 +1548,10 @@ async function kirimLaporan(){
     }
 
 
-    /* ---------------------------------------
-       2. PENGELUARAN
-    --------------------------------------- */
+
+    /* =====================================
+       PENGELUARAN
+    ===================================== */
 
     for(
       const expense of pengeluaran
@@ -1790,6 +1607,11 @@ async function kirimLaporan(){
 
     }
 
+
+
+    /* =====================================
+       SUKSES
+    ===================================== */
 
     tampilStatus(
       "✅ TRANSAKSI BERHASIL — Laporan berhasil disimpan.",
@@ -2037,7 +1859,7 @@ document.getElementById(
 
 
 /* =========================================================
-   EVENT INPUT PENDAPATAN
+   EVENT PENDAPATAN
 ========================================================= */
 
 [
@@ -2053,7 +1875,6 @@ document.getElementById(
   function(id){
 
     document.getElementById(id)
-
       .addEventListener(
         "input",
         hitungPendapatan
