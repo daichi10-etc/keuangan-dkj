@@ -4,209 +4,1098 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DKJ Finance</title>
+<title>DEKAJE GROUP FINANCE</title>
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  margin:0;
   padding:20px;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  min-height:100vh;
+}
+
+.container{
+  max-width:560px;
+  margin:auto;
 }
 
 .box{
-  max-width:520px;
-  margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  background:#fff;
+  padding:24px;
+  border-radius:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
 
 h1{
   text-align:center;
+  margin:0;
   color:#ff4d6d;
-  margin-bottom:5px;
+  font-size:26px;
 }
 
 .sub{
   text-align:center;
-  color:gray;
-  margin-bottom:20px;
+  color:#777;
+  margin:6px 0 24px;
+  font-size:14px;
+}
+
+.section{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid #eee;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:bold;
+  color:#333;
+  margin-bottom:12px;
 }
 
 label{
   display:block;
   margin-top:12px;
+  margin-bottom:5px;
+  font-weight:bold;
+  color:#444;
+  font-size:14px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:15px;
+  background:#fff;
+  outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#ff6b81;
+}
+
+input[type="number"]{
+  text-align:right;
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.summary{
+  margin-top:18px;
+  padding:16px;
+  border-radius:15px;
+  background:#f8f8f8;
+}
+
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:7px 0;
+  color:#555;
+}
+
+.summary-row strong{
+  color:#222;
+}
+
+.summary-total{
+  border-top:1px solid #ddd;
+  margin-top:8px;
+  padding-top:12px;
+  font-size:18px;
+}
+
+.expense-item{
+  border:1px solid #e5e5e5;
+  border-radius:15px;
+  padding:14px;
+  margin-top:12px;
+  background:#fafafa;
+}
+
+.expense-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:5px;
+}
+
+.expense-number{
   font-weight:bold;
   color:#444;
 }
 
-select,input,textarea{
-  width:100%;
-  padding:12px;
-  margin-top:5px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:14px;
-  box-sizing:border-box;
+.remove-btn{
+  width:auto;
+  margin:0;
+  padding:6px 10px;
+  border:none;
+  border-radius:8px;
+  background:#eee;
+  color:#777;
+  font-size:12px;
 }
 
-button{
+.add-btn{
   width:100%;
-  padding:14px;
-  margin-top:20px;
+  margin-top:12px;
+  padding:12px;
+  border:2px dashed #ff758c;
+  border-radius:12px;
+  background:#fff;
+  color:#ff4d6d;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.main-btn{
+  width:100%;
+  margin-top:22px;
+  padding:15px;
   border:none;
   border-radius:14px;
   background:linear-gradient(135deg,#ff4d6d,#ff758c);
-  color:white;
-  font-weight:bold;
+  color:#fff;
   font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-#status{
-  text-align:center;
+.main-btn:disabled{
+  background:#aaa;
+  cursor:not-allowed;
+}
+
+.status{
+  display:none;
   margin-top:15px;
+  padding:13px;
+  border-radius:12px;
+  text-align:center;
   font-weight:bold;
+}
+
+.status.success{
+  display:block;
+  background:#e8f8ed;
+  color:#188542;
+}
+
+.status.error{
+  display:block;
+  background:#fdecec;
+  color:#c62828;
+}
+
+.status.loading{
+  display:block;
+  background:#fff5e5;
+  color:#a86600;
+}
+
+.note{
+  margin-top:12px;
+  text-align:center;
+  color:#888;
+  font-size:12px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <div class="box">
 
-<h1>💸 DKJ FINANCE</h1>
-<div class="sub">Sistem Keuangan DKJ Group</div>
+<h1>💰 DEKAJE GROUP FINANCE</h1>
 
-<label>📌 Jenis Transaksi</label>
-<select id="tipe">
-  <option value="pemasukan">💰 Pemasukan</option>
-  <option value="pengeluaran">🛒 Pengeluaran</option>
-  <option value="utang">📋 Hutang</option>
-</select>
+<div class="sub">
+Laporan Keuangan Harian
+</div>
 
-<label>👤 Nama Penginput</label>
-<input type="text" id="penginput" placeholder="Nama penginput">
 
-<label>🏢 Cabang / Sumber</label>
+<!-- CABANG -->
+
+<label>🏢 Cabang</label>
+
 <select id="cabang">
-  <option>DEKAJE METRO</option>
-  <option>DEKAJE WAY JEPARA</option>
-  <option>MIE RAWUH</option>
-  <option>FOTIVA</option>
-  <option>PRIBADI</option>
-  <option>LAINNYA</option>
+  <option value="">Memuat cabang...</option>
 </select>
 
-<label>📂 Kategori</label>
-<select id="kategori">
-  <option>Omzet Harian</option>
-  <option>Belanja Bahan</option>
-  <option>Operasional</option>
-  <option>Rumah Tangga</option>
-  <option>Pribadi Owner</option>
-  <option>Bayar Hutang</option>
-  <option>Tambah Hutang</option>
-  <option>Lainnya</option>
-</select>
 
-<label>🧺 Nama Barang / Pengeluaran</label>
-<input type="text" id="namaBarang" placeholder="Contoh: Ayam, Mie, Gula, Bensin">
+<!-- PENDAPATAN -->
 
-<label>⚖️ Jumlah / Ukuran</label>
-<input type="text" id="jumlahUkuran" placeholder="Contoh: 10 kg, 2 liter, 20 pcs">
+<div class="section">
 
-<label>💳 Sumber Dana</label>
-<select id="sumberUang">
-  <option>Kas Cabang</option>
-  <option>Uang Pribadi Owner</option>
-  <option>Online Cair</option>
-  <option>Hutang / Bon</option>
-  <option>Lainnya</option>
-</select>
+<div class="section-title">
+💰 Pendapatan
+</div>
 
 <label>💵 Cash</label>
-<input type="number" id="cash" placeholder="Nominal cash">
+<input type="number" id="cash" min="0" inputmode="numeric" placeholder="0">
 
-<label>📲 Online / Transfer</label>
-<input type="number" id="online" placeholder="Nominal online / transfer">
+<label>🏦 Transfer</label>
+<input type="number" id="transfer" min="0" inputmode="numeric" placeholder="0">
 
-<label>🧾 Total</label>
-<input type="number" id="total" placeholder="Total transaksi">
+<label>📱 QR</label>
+<input type="number" id="qr" min="0" inputmode="numeric" placeholder="0">
 
-<label>📝 Catatan</label>
-<textarea id="catatan" placeholder="Catatan tambahan"></textarea>
+<label>🛵 Grab</label>
+<input type="number" id="grab" min="0" inputmode="numeric" placeholder="0">
 
-<label>📸 Upload Foto Nota / Bukti</label>
-<input type="file" accept="image/*" capture="environment">
+<label>🛵 Gojek</label>
+<input type="number" id="gojek" min="0" inputmode="numeric" placeholder="0">
 
-<button onclick="kirimData()">🚀 Kirim Data</button>
+<label>🛍️ Shopee</label>
+<input type="number" id="shopee" min="0" inputmode="numeric" placeholder="0">
 
-<p id="status"></p>
+
+<div class="summary">
+
+<div class="summary-row summary-total">
+<strong>Total Pendapatan</strong>
+<strong id="totalPendapatan">Rp0</strong>
+</div>
 
 </div>
 
+</div>
+
+
+<!-- PENGELUARAN -->
+
+<div class="section">
+
+<div class="section-title">
+💸 Pengeluaran Operasional
+</div>
+
+<div id="expenseList"></div>
+
+<button
+  type="button"
+  class="add-btn"
+  id="addExpenseBtn"
+  onclick="tambahPengeluaran()">
+  + Tambah Pengeluaran
+</button>
+
+
+<div class="summary">
+
+<div class="summary-row">
+<span>Total Pengeluaran</span>
+<strong id="totalPengeluaran">Rp0</strong>
+</div>
+
+<div class="summary-row summary-total">
+<strong>Sisa Cash</strong>
+<strong id="sisaCash">Rp0</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- CATATAN -->
+
+<div class="section">
+
+<label>📝 Catatan</label>
+
+<textarea
+  id="catatan"
+  placeholder="Catatan tambahan (opsional)">
+</textarea>
+
+</div>
+
+
+<!-- KIRIM -->
+
+<button
+  type="button"
+  class="main-btn"
+  id="kirimBtn"
+  onclick="kirimLaporan()">
+
+🚀 KIRIM LAPORAN
+
+</button>
+
+<div id="status" class="status"></div>
+
+<div class="note">
+Pastikan angka sudah benar sebelum mengirim laporan.
+</div>
+
+</div>
+
+</div>
+
+
 <script>
-function kirimData(){
 
-  document.getElementById("status").innerText = "⏳ Mengirim data...";
+/* =========================================================
+   URL BACKEND
+========================================================= */
 
-  const tipe = document.getElementById("tipe").value;
-  const penginput = document.getElementById("penginput").value;
-  const cabang = document.getElementById("cabang").value;
-  const kategori = document.getElementById("kategori").value;
-  const namaBarang = document.getElementById("namaBarang").value;
-  const jumlahUkuran = document.getElementById("jumlahUkuran").value;
-  const sumberUang = document.getElementById("sumberUang").value;
-  const cash = document.getElementById("cash").value || 0;
-  const online = document.getElementById("online").value || 0;
-  const total = document.getElementById("total").value || 0;
-  const catatan = document.getElementById("catatan").value;
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbxPBMSGLb-HV9yk7LPWb5HL1IKFYzaj5dL5DYJbHFPHyscKHFchso9UYvsxkTvbawxvdA/exec";
 
-  const data = {
-    tipe: tipe,
 
-    penginput: penginput,
+let sumberPengeluaran = [];
 
-    sumber: cabang,
-    cabang: cabang,
+let sedangMengirim = false;
 
-    kategori: kategori,
-    jenisPemasukan: kategori,
 
-    namaBarang: namaBarang,
-    jumlahUkuran: jumlahUkuran,
+/* =========================================================
+   FORMAT RUPIAH
+========================================================= */
 
-    cash: cash,
-    online: online,
-    total: total,
+function rupiah(angka){
 
-    sumberUang: sumberUang,
+  return new Intl.NumberFormat(
+    "id-ID",
+    {
+      style:"currency",
+      currency:"IDR",
+      maximumFractionDigits:0
+    }
+  ).format(angka || 0);
 
-    catatan: catatan,
-    foto: "Upload Menyusul",
+}
 
-    namaUtang: namaBarang || cabang,
-    jenisTransaksi: kategori,
-    tambahanUtang: cash,
-    pembayaran: online,
-    sisaUtang: total,
-    jatuhTempo: "-",
-    status: "Aktif"
-  };
 
-  fetch("https://script.google.com/macros/s/AKfycbxPBMSGLb-HV9yk7LPWb5HL1IKFYzaj5dL5DYJbHFPHyscKHFchso9UYvsxkTvbawxvdA/exec",{
-    method:"POST",
-    body:JSON.stringify(data)
-  })
-  .then(()=>{
-    document.getElementById("status").innerText = "✅ Data berhasil dikirim";
-  })
-  .catch(()=>{
-    document.getElementById("status").innerText = "❌ Gagal kirim";
+/* =========================================================
+   AMBIL ANGKA
+========================================================= */
+
+function angka(id){
+
+  return Number(
+    document.getElementById(id).value
+  ) || 0;
+
+}
+
+
+/* =========================================================
+   LOAD MASTER
+========================================================= */
+
+async function loadMaster(){
+
+  try{
+
+    const response = await fetch(SCRIPT_URL);
+
+    const result = await response.json();
+
+    if(!result.success){
+
+      throw new Error(
+        result.message || "Gagal mengambil MASTER"
+      );
+
+    }
+
+    const cabangSelect =
+      document.getElementById("cabang");
+
+    cabangSelect.innerHTML =
+      '<option value="">Pilih cabang</option>';
+
+    result.master.cabang.forEach(function(nama){
+
+      const option =
+        document.createElement("option");
+
+      option.value = nama;
+      option.textContent = nama;
+
+      cabangSelect.appendChild(option);
+
+    });
+
+
+    sumberPengeluaran =
+      result.master.sumberPengeluaran || [];
+
+
+  }catch(error){
+
+    const cabangSelect =
+      document.getElementById("cabang");
+
+    cabangSelect.innerHTML =
+      '<option value="">Gagal memuat cabang</option>';
+
+    tampilStatus(
+      "❌ Gagal memuat data cabang.",
+      "error"
+    );
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =========================================================
+   HITUNG TOTAL PENDAPATAN
+========================================================= */
+
+function hitungPendapatan(){
+
+  const total =
+    angka("cash") +
+    angka("transfer") +
+    angka("qr") +
+    angka("grab") +
+    angka("gojek") +
+    angka("shopee");
+
+  document.getElementById(
+    "totalPendapatan"
+  ).innerText = rupiah(total);
+
+  hitungRingkasan();
+
+}
+
+
+/* =========================================================
+   TAMBAH PENGELUARAN
+========================================================= */
+
+function tambahPengeluaran(){
+
+  const container =
+    document.getElementById("expenseList");
+
+  const index =
+    container.children.length;
+
+  const item =
+    document.createElement("div");
+
+  item.className =
+    "expense-item";
+
+  let options =
+    '<option value="">Pilih sumber</option>';
+
+  sumberPengeluaran.forEach(function(sumber){
+
+    options +=
+      `<option value="${escapeHtml(sumber)}">
+        ${escapeHtml(sumber)}
+      </option>`;
+
+  });
+
+
+  item.innerHTML = `
+
+    <div class="expense-head">
+
+      <div class="expense-number">
+        Pengeluaran ${index + 1}
+      </div>
+
+      <button
+        type="button"
+        class="remove-btn"
+        onclick="hapusPengeluaran(this)">
+        Hapus
+      </button>
+
+    </div>
+
+    <label>Sumber</label>
+
+    <select class="expense-source">
+      ${options}
+    </select>
+
+    <label>Keperluan</label>
+
+    <input
+      type="text"
+      class="expense-name"
+      placeholder="Contoh: Gas, es batu, belanja bahan">
+
+    <label>Nominal</label>
+
+    <input
+      type="number"
+      class="expense-amount"
+      min="0"
+      inputmode="numeric"
+      placeholder="0"
+      oninput="hitungRingkasan()">
+
+  `;
+
+  container.appendChild(item);
+
+  hitungRingkasan();
+
+}
+
+
+/* =========================================================
+   HAPUS PENGELUARAN
+========================================================= */
+
+function hapusPengeluaran(button){
+
+  const item =
+    button.closest(".expense-item");
+
+  if(item){
+
+    item.remove();
+
+  }
+
+  rapikanNomorPengeluaran();
+
+  hitungRingkasan();
+
+}
+
+
+/* =========================================================
+   RAPIIKAN NOMOR
+========================================================= */
+
+function rapikanNomorPengeluaran(){
+
+  const items =
+    document.querySelectorAll(
+      ".expense-item"
+    );
+
+  items.forEach(function(item,index){
+
+    item.querySelector(
+      ".expense-number"
+    ).innerText =
+      "Pengeluaran " + (index + 1);
+
   });
 
 }
+
+
+/* =========================================================
+   HITUNG PENGELUARAN + SISA CASH
+========================================================= */
+
+function hitungRingkasan(){
+
+  let totalPengeluaran = 0;
+
+  document
+    .querySelectorAll(".expense-amount")
+    .forEach(function(input){
+
+      totalPengeluaran +=
+        Number(input.value) || 0;
+
+    });
+
+
+  const cash =
+    angka("cash");
+
+  const totalPendapatan =
+    angka("cash") +
+    angka("transfer") +
+    angka("qr") +
+    angka("grab") +
+    angka("gojek") +
+    angka("shopee");
+
+
+  const sisaCash =
+    cash - totalPengeluaran;
+
+
+  document.getElementById(
+    "totalPendapatan"
+  ).innerText =
+    rupiah(totalPendapatan);
+
+
+  document.getElementById(
+    "totalPengeluaran"
+  ).innerText =
+    rupiah(totalPengeluaran);
+
+
+  document.getElementById(
+    "sisaCash"
+  ).innerText =
+    rupiah(sisaCash);
+
+}
+
+
+/* =========================================================
+   KIRIM LAPORAN
+========================================================= */
+
+async function kirimLaporan(){
+
+  if(sedangMengirim){
+
+    return;
+
+  }
+
+
+  const cabang =
+    document.getElementById("cabang").value;
+
+
+  if(!cabang){
+
+    tampilStatus(
+      "⚠️ Silakan pilih cabang terlebih dahulu.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const totalPendapatan =
+
+    angka("cash") +
+    angka("transfer") +
+    angka("qr") +
+    angka("grab") +
+    angka("gojek") +
+    angka("shopee");
+
+
+  const expenseItems =
+    document.querySelectorAll(
+      ".expense-item"
+    );
+
+
+  const pengeluaran = [];
+
+
+  for(
+    const item of expenseItems
+  ){
+
+    const sumber =
+      item.querySelector(
+        ".expense-source"
+      ).value;
+
+    const keperluan =
+      item.querySelector(
+        ".expense-name"
+      ).value.trim();
+
+    const nominal =
+      Number(
+        item.querySelector(
+          ".expense-amount"
+        ).value
+      ) || 0;
+
+
+    if(
+      !sumber &&
+      !keperluan &&
+      nominal === 0
+    ){
+
+      continue;
+
+    }
+
+
+    if(!sumber){
+
+      tampilStatus(
+        "⚠️ Pilih sumber untuk setiap pengeluaran.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if(!keperluan){
+
+      tampilStatus(
+        "⚠️ Isi keperluan pengeluaran.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if(nominal <= 0){
+
+      tampilStatus(
+        "⚠️ Isi nominal pengeluaran dengan benar.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    pengeluaran.push({
+
+      sumber:sumber,
+      keperluan:keperluan,
+      nominal:nominal
+
+    });
+
+  }
+
+
+  sedangMengirim = true;
+
+  const tombol =
+    document.getElementById("kirimBtn");
+
+  tombol.disabled = true;
+
+  tombol.innerText =
+    "⏳ MENGIRIM LAPORAN...";
+
+
+  tampilStatus(
+    "⏳ Laporan sedang dikirim, jangan tutup halaman.",
+    "loading"
+  );
+
+
+  try{
+
+    /* ---------------------------------------
+       1. SIMPAN PENDAPATAN
+    --------------------------------------- */
+
+    const pendapatanData = {
+
+      tipe:"pemasukan",
+
+      penginput:"",
+
+      cabang:cabang,
+
+      cash:angka("cash"),
+
+      transfer:angka("transfer"),
+
+      qr:angka("qr"),
+
+      grab:angka("grab"),
+
+      gojek:angka("gojek"),
+
+      shopee:angka("shopee"),
+
+      catatan:
+        document.getElementById(
+          "catatan"
+        ).value.trim()
+
+    };
+
+
+    const hasilPendapatan =
+      await kirimKeBackend(
+        pendapatanData
+      );
+
+
+    if(!hasilPendapatan.success){
+
+      throw new Error(
+        hasilPendapatan.message ||
+        "Pendapatan gagal disimpan"
+      );
+
+    }
+
+
+    /* ---------------------------------------
+       2. SIMPAN SEMUA PENGELUARAN
+    --------------------------------------- */
+
+    for(
+      const expense of pengeluaran
+    ){
+
+      const dataPengeluaran = {
+
+        tipe:"pengeluaran",
+
+        penginput:"",
+
+        cabang:cabang,
+
+        sumber:expense.sumber,
+
+        keperluan:expense.keperluan,
+
+        nominal:expense.nominal,
+
+        catatan:
+          document.getElementById(
+            "catatan"
+          ).value.trim()
+
+      };
+
+
+      const hasilPengeluaran =
+        await kirimKeBackend(
+          dataPengeluaran
+        );
+
+
+      if(!hasilPengeluaran.success){
+
+        throw new Error(
+          hasilPengeluaran.message ||
+          "Pengeluaran gagal disimpan"
+        );
+
+      }
+
+    }
+
+
+    /* ---------------------------------------
+       BERHASIL
+    --------------------------------------- */
+
+    tampilStatus(
+      "✅ TRANSAKSI BERHASIL — Laporan berhasil disimpan.",
+      "success"
+    );
+
+
+    kosongkanForm();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    tampilStatus(
+      "❌ TRANSAKSI GAGAL — Data belum berhasil disimpan. Form tetap dipertahankan.",
+      "error"
+    );
+
+  }finally{
+
+    sedangMengirim = false;
+
+    tombol.disabled = false;
+
+    tombol.innerText =
+      "🚀 KIRIM LAPORAN";
+
+  }
+
+}
+
+
+/* =========================================================
+   KIRIM KE BACKEND
+========================================================= */
+
+async function kirimKeBackend(data){
+
+  const response =
+    await fetch(
+      SCRIPT_URL,
+      {
+        method:"POST",
+        body:JSON.stringify(data)
+      }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  let result;
+
+
+  try{
+
+    result =
+      JSON.parse(text);
+
+  }catch(error){
+
+    throw new Error(
+      "Backend mengembalikan respons yang tidak valid."
+    );
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   KOSONGKAN FORM
+========================================================= */
+
+function kosongkanForm(){
+
+  document.getElementById(
+    "cabang"
+  ).value = "";
+
+
+  [
+    "cash",
+    "transfer",
+    "qr",
+    "grab",
+    "gojek",
+    "shopee"
+  ].forEach(function(id){
+
+    document.getElementById(id).value = "";
+
+  });
+
+
+  document.getElementById(
+    "catatan"
+  ).value = "";
+
+
+  document.getElementById(
+    "expenseList"
+  ).innerHTML = "";
+
+
+  document.getElementById(
+    "totalPendapatan"
+  ).innerText = rupiah(0);
+
+
+  document.getElementById(
+    "totalPengeluaran"
+  ).innerText = rupiah(0);
+
+
+  document.getElementById(
+    "sisaCash"
+  ).innerText = rupiah(0);
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function tampilStatus(pesan, tipe){
+
+  const status =
+    document.getElementById("status");
+
+  status.innerText = pesan;
+
+  status.className =
+    "status " + tipe;
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   EVENT INPUT
+========================================================= */
+
+[
+  "cash",
+  "transfer",
+  "qr",
+  "grab",
+  "gojek",
+  "shopee"
+].forEach(function(id){
+
+  document.getElementById(id)
+    .addEventListener(
+      "input",
+      hitungPendapatan
+    );
+
+});
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadMaster();
+
 </script>
 
 </body>
