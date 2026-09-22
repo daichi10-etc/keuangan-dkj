@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
 <title>DEKAJE GROUP FINANCE</title>
 
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -94,6 +101,11 @@ textarea{
   resize:vertical;
 }
 
+.locked{
+  background:#f5f5f5;
+  color:#777;
+}
+
 .summary{
   margin-top:18px;
   padding:16px;
@@ -149,6 +161,7 @@ textarea{
   background:#eee;
   color:#777;
   font-size:12px;
+  cursor:pointer;
 }
 
 .add-btn{
@@ -161,6 +174,7 @@ textarea{
   color:#ff4d6d;
   font-weight:bold;
   font-size:14px;
+  cursor:pointer;
 }
 
 .main-btn{
@@ -214,8 +228,28 @@ textarea{
   color:#888;
   font-size:12px;
 }
+
+.user-info{
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  background:#f8f8f8;
+  font-size:13px;
+  color:#666;
+}
+
+.user-info strong{
+  color:#333;
+}
+
+.hidden{
+  display:none;
+}
+
 </style>
+
 </head>
+
 
 <body>
 
@@ -230,16 +264,37 @@ Laporan Keuangan Harian
 </div>
 
 
-<!-- CABANG -->
+<!-- =====================================================
+     IDENTITAS PENGINPUT
+===================================================== -->
+
+<div>
+
+<label>👤 Nama Penginput</label>
+
+<select id="penginput">
+  <option value="">Memuat pengguna...</option>
+</select>
+
 
 <label>🏢 Cabang</label>
 
 <select id="cabang">
-  <option value="">Memuat cabang...</option>
+  <option value="">Pilih cabang</option>
 </select>
 
 
-<!-- PENDAPATAN -->
+<div
+  id="userInfo"
+  class="user-info hidden"
+></div>
+
+</div>
+
+
+<!-- =====================================================
+     PENDAPATAN
+===================================================== -->
 
 <div class="section">
 
@@ -247,38 +302,93 @@ Laporan Keuangan Harian
 💰 Pendapatan
 </div>
 
+
 <label>💵 Cash</label>
-<input type="number" id="cash" min="0" inputmode="numeric" placeholder="0">
+
+<input
+  type="number"
+  id="cash"
+  min="0"
+  inputmode="numeric"
+  placeholder="0"
+/>
+
 
 <label>🏦 Transfer</label>
-<input type="number" id="transfer" min="0" inputmode="numeric" placeholder="0">
+
+<input
+  type="number"
+  id="transfer"
+  min="0"
+  inputmode="numeric"
+  placeholder="0"
+/>
+
 
 <label>📱 QR</label>
-<input type="number" id="qr" min="0" inputmode="numeric" placeholder="0">
+
+<input
+  type="number"
+  id="qr"
+  min="0"
+  inputmode="numeric"
+  placeholder="0"
+/>
+
 
 <label>🛵 Grab</label>
-<input type="number" id="grab" min="0" inputmode="numeric" placeholder="0">
+
+<input
+  type="number"
+  id="grab"
+  min="0"
+  inputmode="numeric"
+  placeholder="0"
+/>
+
 
 <label>🛵 Gojek</label>
-<input type="number" id="gojek" min="0" inputmode="numeric" placeholder="0">
+
+<input
+  type="number"
+  id="gojek"
+  min="0"
+  inputmode="numeric"
+  placeholder="0"
+/>
+
 
 <label>🛍️ Shopee</label>
-<input type="number" id="shopee" min="0" inputmode="numeric" placeholder="0">
+
+<input
+  type="number"
+  id="shopee"
+  min="0"
+  inputmode="numeric"
+  placeholder="0"
+/>
 
 
 <div class="summary">
 
 <div class="summary-row summary-total">
+
 <strong>Total Pendapatan</strong>
-<strong id="totalPendapatan">Rp0</strong>
-</div>
+
+<strong id="totalPendapatan">
+Rp0
+</strong>
 
 </div>
 
 </div>
 
+</div>
 
-<!-- PENGELUARAN -->
+
+<!-- =====================================================
+     PENGELUARAN
+===================================================== -->
 
 <div class="section">
 
@@ -286,35 +396,75 @@ Laporan Keuangan Harian
 💸 Pengeluaran Operasional
 </div>
 
+
 <div id="expenseList"></div>
+
 
 <button
   type="button"
   class="add-btn"
   id="addExpenseBtn"
-  onclick="tambahPengeluaran()">
-  + Tambah Pengeluaran
+  onclick="tambahPengeluaran()"
+>
+
++ Tambah Pengeluaran
+
 </button>
 
 
 <div class="summary">
 
 <div class="summary-row">
+
 <span>Total Pengeluaran</span>
-<strong id="totalPengeluaran">Rp0</strong>
+
+<strong id="totalPengeluaran">
+Rp0
+</strong>
+
 </div>
+
+
+<div class="summary-row">
+
+<span>Pengeluaran Cash</span>
+
+<strong id="pengeluaranCash">
+Rp0
+</strong>
+
+</div>
+
+
+<div class="summary-row">
+
+<span>Pengeluaran Non-Cash</span>
+
+<strong id="pengeluaranNonCash">
+Rp0
+</strong>
+
+</div>
+
 
 <div class="summary-row summary-total">
+
 <strong>Sisa Cash</strong>
-<strong id="sisaCash">Rp0</strong>
-</div>
+
+<strong id="sisaCash">
+Rp0
+</strong>
 
 </div>
 
 </div>
 
+</div>
 
-<!-- CATATAN -->
+
+<!-- =====================================================
+     CATATAN
+===================================================== -->
 
 <div class="section">
 
@@ -322,29 +472,40 @@ Laporan Keuangan Harian
 
 <textarea
   id="catatan"
-  placeholder="Catatan tambahan (opsional)">
-</textarea>
+  placeholder="Catatan tambahan (opsional)"
+></textarea>
 
 </div>
 
 
-<!-- KIRIM -->
+<!-- =====================================================
+     KIRIM
+===================================================== -->
 
 <button
   type="button"
   class="main-btn"
   id="kirimBtn"
-  onclick="kirimLaporan()">
+  onclick="kirimLaporan()"
+>
 
 🚀 KIRIM LAPORAN
 
 </button>
 
-<div id="status" class="status"></div>
+
+<div
+  id="status"
+  class="status"
+></div>
+
 
 <div class="note">
+
 Pastikan angka sudah benar sebelum mengirim laporan.
+
 </div>
+
 
 </div>
 
@@ -352,6 +513,7 @@ Pastikan angka sudah benar sebelum mengirim laporan.
 
 
 <script>
+
 
 /* =========================================================
    URL BACKEND
@@ -361,7 +523,15 @@ const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbxPBMSGLb-HV9yk7LPWb5HL1IKFYzaj5dL5DYJbHFPHyscKHFchso9UYvsxkTvbawxvdA/exec";
 
 
+/* =========================================================
+   DATA MASTER
+========================================================= */
+
+let masterCabang = [];
+
 let sumberPengeluaran = [];
+
+let users = [];
 
 let sedangMengirim = false;
 
@@ -405,59 +575,243 @@ async function loadMaster(){
 
   try{
 
-    const response = await fetch(SCRIPT_URL);
+    const response =
+      await fetch(SCRIPT_URL);
 
-    const result = await response.json();
+    const result =
+      await response.json();
+
 
     if(!result.success){
 
       throw new Error(
-        result.message || "Gagal mengambil MASTER"
+        result.message ||
+        "Gagal mengambil MASTER"
       );
 
     }
 
-    const cabangSelect =
-      document.getElementById("cabang");
 
-    cabangSelect.innerHTML =
-      '<option value="">Pilih cabang</option>';
-
-    result.master.cabang.forEach(function(nama){
-
-      const option =
-        document.createElement("option");
-
-      option.value = nama;
-      option.textContent = nama;
-
-      cabangSelect.appendChild(option);
-
-    });
+    masterCabang =
+      result.master.cabang || [];
 
 
     sumberPengeluaran =
       result.master.sumberPengeluaran || [];
 
 
+    users =
+      result.master.users || [];
+
+
+    isiDropdownPenginput();
+
+    isiDropdownCabang();
+
+
   }catch(error){
 
-    const cabangSelect =
-      document.getElementById("cabang");
-
-    cabangSelect.innerHTML =
-      '<option value="">Gagal memuat cabang</option>';
+    console.error(error);
 
     tampilStatus(
-      "❌ Gagal memuat data cabang.",
+      "❌ Gagal memuat data MASTER. Periksa deployment backend.",
       "error"
     );
-
-    console.error(error);
 
   }
 
 }
+
+
+/* =========================================================
+   DROPDOWN PENGINPUT
+========================================================= */
+
+function isiDropdownPenginput(){
+
+  const select =
+    document.getElementById("penginput");
+
+
+  select.innerHTML =
+    '<option value="">Pilih nama penginput</option>';
+
+
+  users
+    .filter(function(user){
+
+      return user.status === "AKTIF";
+
+    })
+    .forEach(function(user){
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        user.nama;
+
+      option.textContent =
+        user.nama +
+        " — " +
+        user.role;
+
+      option.dataset.cabang =
+        user.cabang;
+
+      option.dataset.role =
+        user.role;
+
+      select.appendChild(option);
+
+    });
+
+}
+
+
+/* =========================================================
+   DROPDOWN CABANG
+========================================================= */
+
+function isiDropdownCabang(){
+
+  const select =
+    document.getElementById("cabang");
+
+
+  select.innerHTML =
+    '<option value="">Pilih cabang</option>';
+
+
+  masterCabang.forEach(function(nama){
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      nama;
+
+    option.textContent =
+      nama;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+
+/* =========================================================
+   SAAT PENGINPUT DIPILIH
+========================================================= */
+
+document
+  .getElementById("penginput")
+  .addEventListener(
+    "change",
+    function(){
+
+      const nama =
+        this.value;
+
+      const user =
+        users.find(function(item){
+
+          return (
+            item.nama === nama &&
+            item.status === "AKTIF"
+          );
+
+        });
+
+
+      const cabangSelect =
+        document.getElementById("cabang");
+
+      const userInfo =
+        document.getElementById("userInfo");
+
+
+      if(!user){
+
+        cabangSelect.disabled = false;
+
+        cabangSelect.classList.remove(
+          "locked"
+        );
+
+        cabangSelect.value = "";
+
+        userInfo.classList.add(
+          "hidden"
+        );
+
+        return;
+
+      }
+
+
+      userInfo.innerHTML =
+        "Role: <strong>" +
+        escapeHtml(user.role) +
+        "</strong>";
+
+
+      userInfo.classList.remove(
+        "hidden"
+      );
+
+
+      /* ---------------------------------------------------
+         KASIR
+      --------------------------------------------------- */
+
+      if(user.role === "KASIR"){
+
+        cabangSelect.value =
+          user.cabang;
+
+        cabangSelect.disabled =
+          true;
+
+        cabangSelect.classList.add(
+          "locked"
+        );
+
+      }
+
+
+      /* ---------------------------------------------------
+         OWNER
+      --------------------------------------------------- */
+
+      else if(user.role === "OWNER"){
+
+        cabangSelect.disabled =
+          false;
+
+        cabangSelect.classList.remove(
+          "locked"
+        );
+
+        cabangSelect.value = "";
+
+      }
+
+
+      else{
+
+        cabangSelect.disabled =
+          false;
+
+        cabangSelect.classList.remove(
+          "locked"
+        );
+
+      }
+
+    }
+  );
 
 
 /* =========================================================
@@ -474,9 +828,12 @@ function hitungPendapatan(){
     angka("gojek") +
     angka("shopee");
 
+
   document.getElementById(
     "totalPendapatan"
-  ).innerText = rupiah(total);
+  ).innerText =
+    rupiah(total);
+
 
   hitungRingkasan();
 
@@ -490,28 +847,36 @@ function hitungPendapatan(){
 function tambahPengeluaran(){
 
   const container =
-    document.getElementById("expenseList");
+    document.getElementById(
+      "expenseList"
+    );
+
 
   const index =
     container.children.length;
 
+
   const item =
     document.createElement("div");
+
 
   item.className =
     "expense-item";
 
-  let options =
+
+  let sourceOptions =
     '<option value="">Pilih sumber</option>';
 
-  sumberPengeluaran.forEach(function(sumber){
 
-    options +=
-      `<option value="${escapeHtml(sumber)}">
-        ${escapeHtml(sumber)}
-      </option>`;
+  sumberPengeluaran
+    .forEach(function(sumber){
 
-  });
+      sourceOptions +=
+        `<option value="${escapeHtml(sumber)}">
+          ${escapeHtml(sumber)}
+        </option>`;
+
+    });
 
 
   item.innerHTML = `
@@ -519,30 +884,61 @@ function tambahPengeluaran(){
     <div class="expense-head">
 
       <div class="expense-number">
+
         Pengeluaran ${index + 1}
+
       </div>
+
 
       <button
         type="button"
         class="remove-btn"
-        onclick="hapusPengeluaran(this)">
+        onclick="hapusPengeluaran(this)"
+      >
+
         Hapus
+
       </button>
 
     </div>
 
+
     <label>Sumber</label>
 
     <select class="expense-source">
-      ${options}
+
+      ${sourceOptions}
+
     </select>
+
 
     <label>Keperluan</label>
 
     <input
       type="text"
       class="expense-name"
-      placeholder="Contoh: Gas, es batu, belanja bahan">
+      placeholder="Contoh: Belanja pasar, gas, listrik"
+    >
+
+
+    <label>Metode Pembayaran</label>
+
+    <select class="expense-method">
+
+      <option value="CASH">
+        CASH
+      </option>
+
+      <option value="TRANSFER">
+        TRANSFER
+      </option>
+
+      <option value="QR">
+        QR
+      </option>
+
+    </select>
+
 
     <label>Nominal</label>
 
@@ -552,9 +948,11 @@ function tambahPengeluaran(){
       min="0"
       inputmode="numeric"
       placeholder="0"
-      oninput="hitungRingkasan()">
+      oninput="hitungRingkasan()"
+    >
 
   `;
+
 
   container.appendChild(item);
 
@@ -570,13 +968,17 @@ function tambahPengeluaran(){
 function hapusPengeluaran(button){
 
   const item =
-    button.closest(".expense-item");
+    button.closest(
+      ".expense-item"
+    );
+
 
   if(item){
 
     item.remove();
 
   }
+
 
   rapikanNomorPengeluaran();
 
@@ -586,7 +988,7 @@ function hapusPengeluaran(button){
 
 
 /* =========================================================
-   RAPIIKAN NOMOR
+   RAPIKAN NOMOR
 ========================================================= */
 
 function rapikanNomorPengeluaran(){
@@ -596,38 +998,79 @@ function rapikanNomorPengeluaran(){
       ".expense-item"
     );
 
-  items.forEach(function(item,index){
 
-    item.querySelector(
-      ".expense-number"
-    ).innerText =
-      "Pengeluaran " + (index + 1);
+  items.forEach(
+    function(item,index){
 
-  });
+      item.querySelector(
+        ".expense-number"
+      ).innerText =
+        "Pengeluaran " +
+        (index + 1);
+
+    }
+  );
 
 }
 
 
 /* =========================================================
-   HITUNG PENGELUARAN + SISA CASH
+   HITUNG PENGELUARAN
 ========================================================= */
 
 function hitungRingkasan(){
 
   let totalPengeluaran = 0;
 
+  let totalCash = 0;
+
+  let totalNonCash = 0;
+
+
   document
-    .querySelectorAll(".expense-amount")
-    .forEach(function(input){
+    .querySelectorAll(
+      ".expense-item"
+    )
+    .forEach(
+      function(item){
 
-      totalPengeluaran +=
-        Number(input.value) || 0;
+        const nominal =
+          Number(
+            item.querySelector(
+              ".expense-amount"
+            ).value
+          ) || 0;
 
-    });
+
+        const metode =
+          item.querySelector(
+            ".expense-method"
+          ).value;
+
+
+        totalPengeluaran +=
+          nominal;
+
+
+        if(metode === "CASH"){
+
+          totalCash +=
+            nominal;
+
+        }else{
+
+          totalNonCash +=
+            nominal;
+
+        }
+
+      }
+    );
 
 
   const cash =
     angka("cash");
+
 
   const totalPendapatan =
     angka("cash") +
@@ -639,7 +1082,7 @@ function hitungRingkasan(){
 
 
   const sisaCash =
-    cash - totalPengeluaran;
+    cash - totalCash;
 
 
   document.getElementById(
@@ -652,6 +1095,18 @@ function hitungRingkasan(){
     "totalPengeluaran"
   ).innerText =
     rupiah(totalPengeluaran);
+
+
+  document.getElementById(
+    "pengeluaranCash"
+  ).innerText =
+    rupiah(totalCash);
+
+
+  document.getElementById(
+    "pengeluaranNonCash"
+  ).innerText =
+    rupiah(totalNonCash);
 
 
   document.getElementById(
@@ -675,8 +1130,51 @@ async function kirimLaporan(){
   }
 
 
+  const penginput =
+    document.getElementById(
+      "penginput"
+    ).value;
+
+
+  if(!penginput){
+
+    tampilStatus(
+      "⚠️ Silakan pilih nama penginput.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const user =
+    users.find(function(item){
+
+      return (
+        item.nama === penginput &&
+        item.status === "AKTIF"
+      );
+
+    });
+
+
+  if(!user){
+
+    tampilStatus(
+      "⚠️ Penginput tidak ditemukan atau tidak aktif.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
   const cabang =
-    document.getElementById("cabang").value;
+    document.getElementById(
+      "cabang"
+    ).value;
 
 
   if(!cabang){
@@ -691,14 +1189,23 @@ async function kirimLaporan(){
   }
 
 
-  const totalPendapatan =
+  /* -------------------------------------------------------
+     VALIDASI KASIR
+  ------------------------------------------------------- */
 
-    angka("cash") +
-    angka("transfer") +
-    angka("qr") +
-    angka("grab") +
-    angka("gojek") +
-    angka("shopee");
+  if(
+    user.role === "KASIR" &&
+    user.cabang !== cabang
+  ){
+
+    tampilStatus(
+      "❌ Kasir tidak memiliki akses ke cabang tersebut.",
+      "error"
+    );
+
+    return;
+
+  }
 
 
   const expenseItems =
@@ -719,10 +1226,18 @@ async function kirimLaporan(){
         ".expense-source"
       ).value;
 
+
     const keperluan =
       item.querySelector(
         ".expense-name"
       ).value.trim();
+
+
+    const metodePembayaran =
+      item.querySelector(
+        ".expense-method"
+      ).value;
+
 
     const nominal =
       Number(
@@ -781,9 +1296,17 @@ async function kirimLaporan(){
 
     pengeluaran.push({
 
-      sumber:sumber,
-      keperluan:keperluan,
-      nominal:nominal
+      sumber:
+        sumber,
+
+      keperluan:
+        keperluan,
+
+      metodePembayaran:
+        metodePembayaran,
+
+      nominal:
+        nominal
 
     });
 
@@ -792,10 +1315,15 @@ async function kirimLaporan(){
 
   sedangMengirim = true;
 
+
   const tombol =
-    document.getElementById("kirimBtn");
+    document.getElementById(
+      "kirimBtn"
+    );
+
 
   tombol.disabled = true;
+
 
   tombol.innerText =
     "⏳ MENGIRIM LAPORAN...";
@@ -809,29 +1337,39 @@ async function kirimLaporan(){
 
   try{
 
-    /* ---------------------------------------
-       1. SIMPAN PENDAPATAN
-    --------------------------------------- */
+
+    /* =====================================================
+       SIMPAN PENDAPATAN
+    ===================================================== */
 
     const pendapatanData = {
 
-      tipe:"pemasukan",
+      tipe:
+        "pemasukan",
 
-      penginput:"",
+      penginput:
+        penginput,
 
-      cabang:cabang,
+      cabang:
+        cabang,
 
-      cash:angka("cash"),
+      cash:
+        angka("cash"),
 
-      transfer:angka("transfer"),
+      transfer:
+        angka("transfer"),
 
-      qr:angka("qr"),
+      qr:
+        angka("qr"),
 
-      grab:angka("grab"),
+      grab:
+        angka("grab"),
 
-      gojek:angka("gojek"),
+      gojek:
+        angka("gojek"),
 
-      shopee:angka("shopee"),
+      shopee:
+        angka("shopee"),
 
       catatan:
         document.getElementById(
@@ -847,7 +1385,9 @@ async function kirimLaporan(){
       );
 
 
-    if(!hasilPendapatan.success){
+    if(
+      !hasilPendapatan.success
+    ){
 
       throw new Error(
         hasilPendapatan.message ||
@@ -857,9 +1397,9 @@ async function kirimLaporan(){
     }
 
 
-    /* ---------------------------------------
-       2. SIMPAN SEMUA PENGELUARAN
-    --------------------------------------- */
+    /* =====================================================
+       SIMPAN SEMUA PENGELUARAN
+    ===================================================== */
 
     for(
       const expense of pengeluaran
@@ -867,17 +1407,26 @@ async function kirimLaporan(){
 
       const dataPengeluaran = {
 
-        tipe:"pengeluaran",
+        tipe:
+          "pengeluaran",
 
-        penginput:"",
+        penginput:
+          penginput,
 
-        cabang:cabang,
+        cabang:
+          cabang,
 
-        sumber:expense.sumber,
+        sumber:
+          expense.sumber,
 
-        keperluan:expense.keperluan,
+        keperluan:
+          expense.keperluan,
 
-        nominal:expense.nominal,
+        metodePembayaran:
+          expense.metodePembayaran,
+
+        nominal:
+          expense.nominal,
 
         catatan:
           document.getElementById(
@@ -893,7 +1442,9 @@ async function kirimLaporan(){
         );
 
 
-      if(!hasilPengeluaran.success){
+      if(
+        !hasilPengeluaran.success
+      ){
 
         throw new Error(
           hasilPengeluaran.message ||
@@ -905,9 +1456,9 @@ async function kirimLaporan(){
     }
 
 
-    /* ---------------------------------------
+    /* =====================================================
        BERHASIL
-    --------------------------------------- */
+    ===================================================== */
 
     tampilStatus(
       "✅ TRANSAKSI BERHASIL — Laporan berhasil disimpan.",
@@ -922,16 +1473,22 @@ async function kirimLaporan(){
 
     console.error(error);
 
+
     tampilStatus(
       "❌ TRANSAKSI GAGAL — Data belum berhasil disimpan. Form tetap dipertahankan.",
       "error"
     );
 
+
   }finally{
 
-    sedangMengirim = false;
+    sedangMengirim =
+      false;
 
-    tombol.disabled = false;
+
+    tombol.disabled =
+      false;
+
 
     tombol.innerText =
       "🚀 KIRIM LAPORAN";
@@ -990,8 +1547,32 @@ async function kirimKeBackend(data){
 function kosongkanForm(){
 
   document.getElementById(
+    "penginput"
+  ).value = "";
+
+
+  document.getElementById(
     "cabang"
   ).value = "";
+
+
+  document.getElementById(
+    "cabang"
+  ).disabled = false;
+
+
+  document.getElementById(
+    "cabang"
+  ).classList.remove(
+    "locked"
+  );
+
+
+  document.getElementById(
+    "userInfo"
+  ).classList.add(
+    "hidden"
+  );
 
 
   [
@@ -1001,11 +1582,15 @@ function kosongkanForm(){
     "grab",
     "gojek",
     "shopee"
-  ].forEach(function(id){
+  ].forEach(
+    function(id){
 
-    document.getElementById(id).value = "";
+      document.getElementById(
+        id
+      ).value = "";
 
-  });
+    }
+  );
 
 
   document.getElementById(
@@ -1020,17 +1605,32 @@ function kosongkanForm(){
 
   document.getElementById(
     "totalPendapatan"
-  ).innerText = rupiah(0);
+  ).innerText =
+    rupiah(0);
 
 
   document.getElementById(
     "totalPengeluaran"
-  ).innerText = rupiah(0);
+  ).innerText =
+    rupiah(0);
+
+
+  document.getElementById(
+    "pengeluaranCash"
+  ).innerText =
+    rupiah(0);
+
+
+  document.getElementById(
+    "pengeluaranNonCash"
+  ).innerText =
+    rupiah(0);
 
 
   document.getElementById(
     "sisaCash"
-  ).innerText = rupiah(0);
+  ).innerText =
+    rupiah(0);
 
 }
 
@@ -1039,12 +1639,20 @@ function kosongkanForm(){
    STATUS
 ========================================================= */
 
-function tampilStatus(pesan, tipe){
+function tampilStatus(
+  pesan,
+  tipe
+){
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
-  status.innerText = pesan;
+
+  status.innerText =
+    pesan;
+
 
   status.className =
     "status " + tipe;
@@ -1059,11 +1667,26 @@ function tampilStatus(pesan, tipe){
 function escapeHtml(value){
 
   return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
@@ -1079,15 +1702,17 @@ function escapeHtml(value){
   "grab",
   "gojek",
   "shopee"
-].forEach(function(id){
+].forEach(
+  function(id){
 
-  document.getElementById(id)
-    .addEventListener(
-      "input",
-      hitungPendapatan
-    );
+    document.getElementById(id)
+      .addEventListener(
+        "input",
+        hitungPendapatan
+      );
 
-});
+  }
+);
 
 
 /* =========================================================
@@ -1099,4 +1724,5 @@ loadMaster();
 </script>
 
 </body>
+
 </html>
