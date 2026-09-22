@@ -1,34 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
-
-<title>DEKAJE GROUP FINANCE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEKAJE GROUP FINANCE V2</title>
 
 <style>
-
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
-  padding:20px;
+  padding:16px;
   font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#ff9a9e,#fad0c4);
   min-height:100vh;
 }
 
+.page{display:none}
+.page.active{display:block}
+
 .container{
-  max-width:560px;
+  max-width:760px;
   margin:auto;
+}
+
+.auth-wrap{
+  min-height:calc(100vh - 32px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.auth-card{
+  width:100%;
+  max-width:430px;
+  background:#fff;
+  padding:28px;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+.auth-card h1{
+  text-align:center;
+  margin:0;
+  color:#ff4d6d;
+  font-size:26px;
+}
+
+.brand-icon{
+  text-align:center;
+  font-size:42px;
+  margin-bottom:6px;
+}
+
+.auth-sub{
+  text-align:center;
+  color:#777;
+  margin:5px 0 24px;
+  font-size:14px;
+  letter-spacing:1px;
 }
 
 .box{
@@ -39,30 +69,44 @@ body{
 }
 
 h1{
-  text-align:center;
   margin:0;
   color:#ff4d6d;
-  font-size:26px;
+  font-size:22px;
 }
 
 .sub{
-  text-align:center;
   color:#777;
-  margin:6px 0 24px;
-  font-size:14px;
+  margin:5px 0 0;
+  font-size:13px;
 }
 
-.section{
-  margin-top:22px;
-  padding-top:18px;
-  border-top:1px solid #eee;
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
 }
 
-.section-title{
-  font-size:18px;
+.logout-btn{
+  flex:none;
+  border:none;
+  border-radius:10px;
+  padding:9px 12px;
+  background:#eee;
+  color:#555;
   font-weight:bold;
-  color:#333;
-  margin-bottom:12px;
+  cursor:pointer;
+}
+
+.logged-user,
+.welcome{
+  margin:0 0 16px;
+  padding:11px 13px;
+  background:#f8f8f8;
+  border-radius:12px;
+  color:#666;
+  font-size:13px;
 }
 
 label{
@@ -104,6 +148,19 @@ textarea{
 select:disabled{
   background:#f3f3f3;
   color:#666;
+}
+
+.section{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid #eee;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:bold;
+  color:#333;
+  margin-bottom:12px;
 }
 
 .user-info{
@@ -237,322 +294,327 @@ select:disabled{
   font-size:12px;
 }
 
+.owner-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  margin-top:18px;
+}
+
+.owner-menu{
+  text-align:left;
+  padding:20px;
+  border:1px solid #eee;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+  cursor:pointer;
+}
+
+.owner-menu span{
+  display:block;
+  font-size:28px;
+  margin-bottom:8px;
+}
+
+.owner-menu strong{
+  display:block;
+  color:#333;
+  font-size:16px;
+}
+
+.owner-menu small{
+  display:block;
+  margin-top:5px;
+  color:#888;
+}
+
+.owner-menu.muted{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+@media(min-width:700px){
+  body{padding:24px}
+
+  .container{
+    max-width:760px;
+  }
+
+  .owner-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
 </style>
 
 </head>
 
-
 <body>
 
+<div id="loginPage" class="page active">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand-icon">💰</div>
+      <h1>DEKAJE GROUP</h1>
+      <div class="auth-sub">FINANCE V2</div>
 
-<div class="container">
+      <label>👤 Nama</label>
+      <select id="loginNama">
+        <option value="">Memuat...</option>
+      </select>
 
-<div class="box">
+      <label>🔐 Password</label>
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Masukkan password"
+        onkeydown="handleLoginKey(event)"
+        autocomplete="current-password"
+      >
 
+      <button
+        id="loginBtn"
+        class="main-btn"
+        type="button"
+        onclick="loginUserFrontend()"
+      >🔐 MASUK</button>
 
-<h1>
-💰 DEKAJE GROUP FINANCE
-</h1>
+      <div id="loginStatus" class="status"></div>
 
-
-<div class="sub">
-Laporan Keuangan Harian
+      <div class="note">
+        Sistem Keuangan DEKAJE GROUP
+      </div>
+    </div>
+  </div>
 </div>
 
+<div id="ownerPage" class="page">
+  <div class="container">
+    <div class="box">
+      <div class="topbar">
+        <div>
+          <h1>💰 DEKAJE GROUP</h1>
+          <div class="sub">OWNER HOME</div>
+        </div>
+        <button class="logout-btn" type="button" onclick="logout()">Keluar</button>
+      </div>
 
+      <div class="welcome">
+        <strong id="currentUserName">-</strong>
+        <span> • </span>
+        <span id="currentUserRole">OWNER</span>
+      </div>
 
-<!-- =====================================
-     PENGINPUT
-===================================== -->
+      <div class="owner-grid">
+        <button class="owner-menu" type="button" onclick="bukaFormTransaksi()">
+          <span>📝</span>
+          <strong>Input Transaksi</strong>
+          <small>Input pendapatan & pengeluaran</small>
+        </button>
 
-<label>
-👤 Nama Penginput
-</label>
-
-<select id="penginput">
-
-  <option value="">
-    Memuat penginput...
-  </option>
-
-</select>
-
-
-<div
-  id="userInfo"
-  class="user-info"
-  style="display:none;"
-></div>
-
-
-
-<!-- =====================================
-     CABANG
-===================================== -->
-
-<label>
-🏢 Cabang
-</label>
-
-<select
-  id="cabang"
-  disabled
->
-
-  <option value="">
-    Pilih nama terlebih dahulu
-  </option>
-
-</select>
-
-
-
-<!-- =====================================
-     PENDAPATAN
-===================================== -->
-
-<div class="section">
-
-<div class="section-title">
-💰 Pendapatan
+        <button class="owner-menu muted" type="button" disabled>
+          <span>📊</span>
+          <strong>Dashboard</strong>
+          <small>Segera kita bangun</small>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
+<div id="transactionPage" class="page">
+  <div class="container">
 
-<label>
-💵 Cash
-</label>
+    <div class="box">
 
-<input
-  type="number"
-  id="cash"
-  min="0"
-  inputmode="numeric"
-  placeholder="0"
->
+      <div class="topbar">
+        <div>
+          <h1>💰 DEKAJE GROUP FINANCE</h1>
+          <div class="sub">Laporan Keuangan Harian</div>
+        </div>
 
+        <button
+          class="logout-btn"
+          type="button"
+          onclick="logout()"
+        >Keluar</button>
+      </div>
 
-<label>
-🏦 Transfer
-</label>
+      <div class="logged-user">
+        <div>
+          👤 <strong id="loggedUserName">-</strong>
+        </div>
+        <div>
+          Role: <strong id="loggedUserRole">-</strong>
+        </div>
+      </div>
 
-<input
-  type="number"
-  id="transfer"
-  min="0"
-  inputmode="numeric"
-  placeholder="0"
->
+      <label>🏢 Cabang</label>
 
+      <select id="cabang" disabled>
+        <option value="">Menyiapkan cabang...</option>
+      </select>
 
-<label>
-📱 QR
-</label>
+      <div
+        id="userInfo"
+        class="user-info"
+        style="display:none;"
+      ></div>
 
-<input
-  type="number"
-  id="qr"
-  min="0"
-  inputmode="numeric"
-  placeholder="0"
->
+      <!-- =====================================
+           PENDAPATAN
+      ====================================== -->
 
+      <div class="section">
 
-<label>
-🛵 Grab
-</label>
+        <div class="section-title">
+          💰 Pendapatan
+        </div>
 
-<input
-  type="number"
-  id="grab"
-  min="0"
-  inputmode="numeric"
-  placeholder="0"
->
+        <label>💵 Cash</label>
+        <input
+          type="number"
+          id="cash"
+          min="0"
+          inputmode="numeric"
+          placeholder="0"
+        >
 
+        <label>🏦 Transfer</label>
+        <input
+          type="number"
+          id="transfer"
+          min="0"
+          inputmode="numeric"
+          placeholder="0"
+        >
 
-<label>
-🛵 Gojek
-</label>
+        <label>📱 QR</label>
+        <input
+          type="number"
+          id="qr"
+          min="0"
+          inputmode="numeric"
+          placeholder="0"
+        >
 
-<input
-  type="number"
-  id="gojek"
-  min="0"
-  inputmode="numeric"
-  placeholder="0"
->
+        <label>🛵 Grab</label>
+        <input
+          type="number"
+          id="grab"
+          min="0"
+          inputmode="numeric"
+          placeholder="0"
+        >
 
+        <label>🛵 Gojek</label>
+        <input
+          type="number"
+          id="gojek"
+          min="0"
+          inputmode="numeric"
+          placeholder="0"
+        >
 
-<label>
-🛍️ Shopee
-</label>
+        <label>🛍️ Shopee</label>
+        <input
+          type="number"
+          id="shopee"
+          min="0"
+          inputmode="numeric"
+          placeholder="0"
+        >
 
-<input
-  type="number"
-  id="shopee"
-  min="0"
-  inputmode="numeric"
-  placeholder="0"
->
+        <div class="summary">
+          <div class="summary-row summary-total">
+            <strong>Total Pendapatan</strong>
+            <strong id="totalPendapatan">Rp0</strong>
+          </div>
+        </div>
 
+      </div>
 
-<div class="summary">
+      <!-- =====================================
+           PENGELUARAN
+      ====================================== -->
 
-<div class="summary-row summary-total">
+      <div class="section">
 
-<strong>
-Total Pendapatan
-</strong>
+        <div class="section-title">
+          💸 Pengeluaran Operasional
+        </div>
 
-<strong id="totalPendapatan">
-Rp0
-</strong>
+        <div id="expenseList"></div>
 
+        <button
+          type="button"
+          class="add-btn"
+          onclick="tambahPengeluaran()"
+        >+ Tambah Pengeluaran</button>
+
+        <div class="summary">
+
+          <div class="summary-row">
+            <span>Total Pengeluaran</span>
+            <strong id="totalPengeluaran">Rp0</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Pengeluaran CASH</span>
+            <strong id="pengeluaranCash">Rp0</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Pengeluaran Non-CASH</span>
+            <strong id="pengeluaranNonCash">Rp0</strong>
+          </div>
+
+          <div class="summary-row summary-total">
+            <strong>Sisa Cash</strong>
+            <strong id="sisaCash">Rp0</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- =====================================
+           CATATAN
+      ====================================== -->
+
+      <div class="section">
+
+        <label>📝 Catatan</label>
+
+        <textarea
+          id="catatan"
+          placeholder="Catatan tambahan (opsional)"
+        ></textarea>
+
+      </div>
+
+      <button
+        type="button"
+        class="main-btn"
+        id="kirimBtn"
+        onclick="kirimLaporan()"
+      >🚀 KIRIM LAPORAN</button>
+
+      <div
+        id="status"
+        class="status"
+      ></div>
+
+      <div class="note">
+        Pastikan angka sudah benar sebelum mengirim laporan.
+      </div>
+
+    </div>
+  </div>
 </div>
-
-</div>
-
-</div>
-
-
-
-<!-- =====================================
-     PENGELUARAN
-===================================== -->
-
-<div class="section">
-
-<div class="section-title">
-💸 Pengeluaran Operasional
-</div>
-
-
-<div id="expenseList"></div>
-
-
-<button
-  type="button"
-  class="add-btn"
-  onclick="tambahPengeluaran()"
->
-+ Tambah Pengeluaran
-</button>
-
-
-<div class="summary">
-
-
-<div class="summary-row">
-
-<span>
-Total Pengeluaran
-</span>
-
-<strong id="totalPengeluaran">
-Rp0
-</strong>
-
-</div>
-
-
-<div class="summary-row">
-
-<span>
-Pengeluaran CASH
-</span>
-
-<strong id="pengeluaranCash">
-Rp0
-</strong>
-
-</div>
-
-
-<div class="summary-row">
-
-<span>
-Pengeluaran Non-CASH
-</span>
-
-<strong id="pengeluaranNonCash">
-Rp0
-</strong>
-
-</div>
-
-
-<div class="summary-row summary-total">
-
-<strong>
-Sisa Cash
-</strong>
-
-<strong id="sisaCash">
-Rp0
-</strong>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-
-<!-- =====================================
-     CATATAN
-===================================== -->
-
-<div class="section">
-
-<label>
-📝 Catatan
-</label>
-
-<textarea
-  id="catatan"
-  placeholder="Catatan tambahan (opsional)"
-></textarea>
-
-</div>
-
-
-
-<!-- =====================================
-     KIRIM
-===================================== -->
-
-<button
-  type="button"
-  class="main-btn"
-  id="kirimBtn"
-  onclick="kirimLaporan()"
->
-
-🚀 KIRIM LAPORAN
-
-</button>
-
-
-<div
-  id="status"
-  class="status"
-></div>
-
-
-<div class="note">
-Pastikan angka sudah benar sebelum mengirim laporan.
-</div>
-
-
-</div>
-
-</div>
-
-
 
 <script>
+
 
 
 /* =========================================================
@@ -578,6 +640,388 @@ let userTerpilih = null;
 let sedangMengirim = false;
 
 
+
+
+/* =========================================================
+   SESSION / LOGIN
+========================================================= */
+
+const SESSION_KEY = "DKJ_FINANCE_SESSION";
+
+let sessionToken = "";
+let sessionUser = null;
+
+function getSavedSession(){
+  try{
+    return JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+  }catch(error){
+    return null;
+  }
+}
+
+function saveSession(data){
+  localStorage.setItem(
+    SESSION_KEY,
+    JSON.stringify(data)
+  );
+}
+
+function clearSession(){
+  localStorage.removeItem(SESSION_KEY);
+  sessionToken = "";
+  sessionUser = null;
+}
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(function(page){
+    page.classList.remove("active");
+  });
+
+  const page = document.getElementById(id);
+
+  if(page){
+    page.classList.add("active");
+  }
+}
+
+function tampilLoginStatus(pesan, tipe){
+  const status = document.getElementById("loginStatus");
+
+  status.innerText = pesan;
+  status.className = "status " + tipe;
+}
+
+async function loginUserFrontend(){
+
+  const nama =
+    document.getElementById("loginNama").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  if(!nama){
+    tampilLoginStatus(
+      "⚠️ Pilih nama terlebih dahulu.",
+      "error"
+    );
+    return;
+  }
+
+  if(!password){
+    tampilLoginStatus(
+      "⚠️ Masukkan password.",
+      "error"
+    );
+    return;
+  }
+
+  const tombol =
+    document.getElementById("loginBtn");
+
+  tombol.disabled = true;
+  tombol.innerText = "⏳ MEMERIKSA...";
+
+  tampilLoginStatus(
+    "⏳ Memeriksa login...",
+    "loading"
+  );
+
+  try{
+
+    const hasil = await kirimKeBackend({
+      tipe:"login",
+      nama:nama,
+      password:password
+    });
+
+    if(!hasil.success){
+      throw new Error(
+        hasil.message || "Login gagal."
+      );
+    }
+
+    sessionToken = hasil.token || "";
+
+    sessionUser = hasil.user || null;
+
+    if(!sessionToken || !sessionUser){
+      throw new Error(
+        "Respons login tidak lengkap dari backend."
+      );
+    }
+
+    saveSession({
+      token:sessionToken,
+      user:sessionUser
+    });
+
+    document.getElementById("loginPassword").value = "";
+
+    tampilLoginStatus(
+      "✅ Login berhasil.",
+      "success"
+    );
+
+    setTimeout(function(){
+      masukAplikasi();
+    },300);
+
+  }catch(error){
+
+    console.error(error);
+
+    tampilLoginStatus(
+      "❌ " + (error.message || "Login gagal."),
+      "error"
+    );
+
+  }finally{
+
+    tombol.disabled = false;
+    tombol.innerText = "🔐 MASUK";
+
+  }
+}
+
+function masukAplikasi(){
+
+  if(!sessionUser){
+    showPage("loginPage");
+    return;
+  }
+
+  document.getElementById("currentUserName").innerText =
+    sessionUser.nama || "-";
+
+  document.getElementById("currentUserRole").innerText =
+    sessionUser.role || "-";
+
+  if(sessionUser.role === "OWNER"){
+
+    showPage("ownerPage");
+
+  }else{
+
+    bukaFormTransaksi();
+
+  }
+
+}
+
+function bukaFormTransaksi(){
+
+  if(!sessionUser){
+    showPage("loginPage");
+    return;
+  }
+
+  document.getElementById("loggedUserName").innerText =
+    sessionUser.nama || "-";
+
+  document.getElementById("loggedUserRole").innerText =
+    sessionUser.role || "-";
+
+  setupCabangUntukSession();
+
+  showPage("transactionPage");
+
+}
+
+function setupCabangUntukSession(){
+
+  const cabangSelect =
+    document.getElementById("cabang");
+
+  const userInfo =
+    document.getElementById("userInfo");
+
+  cabangSelect.innerHTML = "";
+
+  userTerpilih = sessionUser;
+
+  if(sessionUser.role === "OWNER"){
+
+    cabangSelect.innerHTML =
+      '<option value="">Pilih cabang</option>';
+
+    masterCabang.forEach(function(namaCabang){
+      tambahOptionCabang(
+        cabangSelect,
+        namaCabang
+      );
+    });
+
+    cabangSelect.disabled = false;
+
+    userInfo.style.display = "block";
+
+    userInfo.innerText =
+      "Role: OWNER • Semua cabang";
+
+    return;
+  }
+
+  const daftarCabang =
+    sessionUser.cabang || [];
+
+  if(daftarCabang.length === 1){
+
+    tambahOptionCabang(
+      cabangSelect,
+      daftarCabang[0]
+    );
+
+    cabangSelect.value =
+      daftarCabang[0];
+
+    cabangSelect.disabled = true;
+
+    userInfo.style.display = "block";
+
+    userInfo.innerText =
+      "Role: " +
+      (sessionUser.role || "KASIR") +
+      " • Cabang: " +
+      daftarCabang[0];
+
+    return;
+  }
+
+  if(daftarCabang.length > 1){
+
+    cabangSelect.innerHTML =
+      '<option value="">Pilih cabang</option>';
+
+    daftarCabang.forEach(function(namaCabang){
+      tambahOptionCabang(
+        cabangSelect,
+        namaCabang
+      );
+    });
+
+    cabangSelect.disabled = false;
+
+    userInfo.style.display = "block";
+
+    userInfo.innerText =
+      "Role: " +
+      (sessionUser.role || "KASIR") +
+      " • " +
+      daftarCabang.length +
+      " cabang";
+
+    return;
+  }
+
+  resetCabang();
+
+  userInfo.style.display = "block";
+
+  userInfo.innerText =
+    "❌ User belum memiliki cabang aktif.";
+}
+
+function logout(){
+
+  clearSession();
+
+  document.getElementById("loginNama").value = "";
+  document.getElementById("loginPassword").value = "";
+
+  const loginStatus =
+    document.getElementById("loginStatus");
+
+  loginStatus.className = "status";
+  loginStatus.innerText = "";
+
+  showPage("loginPage");
+
+}
+
+function handleLoginKey(event){
+
+  if(event.key === "Enter"){
+    loginUserFrontend();
+  }
+
+}
+
+async function loadMasterForLogin(){
+
+  try{
+
+    const response =
+      await fetch(SCRIPT_URL);
+
+    const result =
+      await response.json();
+
+    if(!result.success){
+      throw new Error(
+        result.message ||
+        "Gagal mengambil MASTER"
+      );
+    }
+
+    masterCabang =
+      result.master.cabang || [];
+
+    masterUsers =
+      result.master.users || [];
+
+    sumberPengeluaran =
+      result.master.sumberPengeluaran || [];
+
+    const loginNama =
+      document.getElementById("loginNama");
+
+    loginNama.innerHTML =
+      '<option value="">Pilih nama</option>';
+
+    masterUsers.forEach(function(user){
+
+      if(user.status !== "AKTIF"){
+        return;
+      }
+
+      const option =
+        document.createElement("option");
+
+      option.value = user.nama;
+      option.textContent = user.nama;
+
+      loginNama.appendChild(option);
+
+    });
+
+    const saved =
+      getSavedSession();
+
+    if(saved && saved.token && saved.user){
+
+      sessionToken = saved.token;
+      sessionUser = saved.user;
+
+      masukAplikasi();
+
+    }else{
+
+      showPage("loginPage");
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    tampilLoginStatus(
+      "❌ Gagal memuat data login.",
+      "error"
+    );
+
+  }
+
+}
 
 /* =========================================================
    RUPIAH
@@ -718,207 +1162,6 @@ async function loadMaster(){
 }
 
 
-
-/* =========================================================
-   PILIH USER
-========================================================= */
-
-function pilihUser(){
-
-  const nama =
-    document.getElementById(
-      "penginput"
-    ).value;
-
-
-  const cabangSelect =
-    document.getElementById(
-      "cabang"
-    );
-
-
-  const userInfo =
-    document.getElementById(
-      "userInfo"
-    );
-
-
-  userTerpilih =
-    masterUsers.find(
-      function(user){
-
-        return (
-          user.nama === nama &&
-          user.status === "AKTIF"
-        );
-
-      }
-    );
-
-
-  cabangSelect.innerHTML = "";
-
-
-  if(!userTerpilih){
-
-    resetCabang();
-
-    userInfo.style.display =
-      "none";
-
-    return;
-
-  }
-
-
-  userInfo.style.display =
-    "block";
-
-
-  userInfo.innerText =
-    "Role: " +
-    userTerpilih.role;
-
-
-
-  /* =======================================
-     OWNER
-     OWNER SAJA YANG BOLEH SEMUA CABANG
-  ======================================= */
-
-  if(
-    userTerpilih.role === "OWNER"
-  ){
-
-    cabangSelect.innerHTML =
-      '<option value="">Pilih cabang</option>';
-
-
-    masterCabang.forEach(
-      function(namaCabang){
-
-        tambahOptionCabang(
-          cabangSelect,
-          namaCabang
-        );
-
-      }
-    );
-
-
-    cabangSelect.disabled =
-      false;
-
-
-    userInfo.innerText =
-      "Role: OWNER • Semua cabang";
-
-    return;
-
-  }
-
-
-
-  /* =======================================
-     PIC / KASIR
-
-     ROLE TIDAK MENENTUKAN JUMLAH CABANG.
-     MASTER.CABANG YANG MENENTUKAN AKSES.
-  ======================================= */
-
-  const daftarCabang =
-    userTerpilih.cabang || [];
-
-
-  /* 1 CABANG */
-
-  if(
-    daftarCabang.length === 1
-  ){
-
-    tambahOptionCabang(
-      cabangSelect,
-      daftarCabang[0]
-    );
-
-
-    cabangSelect.value =
-      daftarCabang[0];
-
-
-    cabangSelect.disabled =
-      true;
-
-
-    userInfo.innerText =
-      "Role: " +
-      userTerpilih.role +
-      " • Cabang: " +
-      daftarCabang[0];
-
-
-    return;
-
-  }
-
-
-
-  /* 2+ CABANG */
-
-  if(
-    daftarCabang.length > 1
-  ){
-
-    cabangSelect.innerHTML =
-      '<option value="">Pilih cabang</option>';
-
-
-    daftarCabang.forEach(
-      function(namaCabang){
-
-        tambahOptionCabang(
-          cabangSelect,
-          namaCabang
-        );
-
-      }
-    );
-
-
-    /*
-      INI SENGAJA FALSE / AKTIF.
-
-      PIC DAN KASIR YANG PUNYA
-      LEBIH DARI SATU CABANG
-      BOLEH MEMILIH CABANG.
-    */
-
-    cabangSelect.disabled =
-      false;
-
-
-    userInfo.innerText =
-      "Role: " +
-      userTerpilih.role +
-      " • " +
-      daftarCabang.length +
-      " cabang";
-
-
-    return;
-
-  }
-
-
-  resetCabang();
-
-}
-
-
-
-/* =========================================================
-   TAMBAH OPTION CABANG
-========================================================= */
 
 function tambahOptionCabang(
   select,
@@ -1282,9 +1525,7 @@ async function kirimLaporan(){
 
 
   const penginput =
-    document.getElementById(
-      "penginput"
-    ).value;
+    sessionUser ? sessionUser.nama : "";
 
 
   const cabang =
@@ -1317,16 +1558,20 @@ async function kirimLaporan(){
   }
 
 
-  if(!userTerpilih){
+  if(!sessionUser){
 
     tampilStatus(
-      "⚠️ Data penginput tidak valid.",
+      "⚠️ Sesi login tidak ditemukan. Silakan login kembali.",
       "error"
     );
+
+    logout();
 
     return;
 
   }
+
+  userTerpilih = sessionUser;
 
 
   /* =======================================
@@ -1658,22 +1903,27 @@ async function kirimLaporan(){
 
 async function kirimKeBackend(data){
 
+  const payload = Object.assign(
+    {},
+    data,
+    {
+      token: sessionToken || undefined
+    }
+  );
+
   const response =
     await fetch(
       SCRIPT_URL,
       {
         method:"POST",
-        body:JSON.stringify(data)
+        body:JSON.stringify(payload)
       }
     );
-
 
   const text =
     await response.text();
 
-
   let result;
-
 
   try{
 
@@ -1688,6 +1938,25 @@ async function kirimKeBackend(data){
 
   }
 
+  if(
+    result &&
+    result.success === false &&
+    (
+      result.message === "Sesi tidak ditemukan atau sudah kadaluarsa" ||
+      result.message === "Sesi tidak valid" ||
+      result.message === "Sesi login diperlukan"
+    )
+  ){
+
+    clearSession();
+
+    showPage("loginPage");
+
+    throw new Error(
+      "Sesi login sudah berakhir. Silakan login kembali."
+    );
+
+  }
 
   return result;
 
@@ -1701,12 +1970,11 @@ async function kirimKeBackend(data){
 
 function kosongkanForm(){
 
-  document.getElementById(
-    "penginput"
-  ).value = "";
-
-
   resetCabang();
+
+  if(sessionUser){
+    setupCabangUntukSession();
+  }
 
 
   document.getElementById(
@@ -1849,12 +2117,7 @@ function escapeHtml(value){
    EVENT USER
 ========================================================= */
 
-document.getElementById(
-  "penginput"
-).addEventListener(
-  "change",
-  pilihUser
-);
+
 
 
 
@@ -1889,10 +2152,15 @@ document.getElementById(
    START
 ========================================================= */
 
-loadMaster();
+
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadMasterForLogin();
 
 </script>
-
 </body>
-
 </html>
