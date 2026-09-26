@@ -1527,6 +1527,16 @@ async function loginUserFrontend(){
   }
 }
 
+function setTextIfExists(id, value){
+
+  const el = document.getElementById(id);
+
+  if(el){
+    el.innerText = value;
+  }
+
+}
+
 function masukAplikasi(){
 
   if(!sessionUser){
@@ -1534,20 +1544,45 @@ function masukAplikasi(){
     return;
   }
 
-  document.getElementById("currentUserName").innerText =
-    sessionUser.nama || "-";
+  /*
+    Elemen user di halaman OWNER dan KASIR tidak selalu
+    berada pada halaman yang sama. Jangan biarkan elemen UI
+    yang tidak ada menghentikan proses routing setelah login.
+  */
+  setTextIfExists(
+    "currentUserName",
+    sessionUser.nama || "-"
+  );
 
-  document.getElementById("currentUserRole").innerText =
-    sessionUser.role || "-";
-  const drawerName = document.getElementById("drawerUserName");
-  const drawerRole = document.getElementById("drawerUserRole");
+  setTextIfExists(
+    "currentUserRole",
+    sessionUser.role || "-"
+  );
+
+  setTextIfExists(
+    "loggedUserName",
+    sessionUser.nama || "-"
+  );
+
+  setTextIfExists(
+    "loggedUserRole",
+    sessionUser.role || "-"
+  );
+
+  const drawerName =
+    document.getElementById("drawerUserName");
+
+  const drawerRole =
+    document.getElementById("drawerUserRole");
 
   if(drawerName){
-    drawerName.innerText = sessionUser.nama || "DEWILA USER";
+    drawerName.innerText =
+      sessionUser.nama || "DEWILA USER";
   }
 
   if(drawerRole){
-    drawerRole.innerText = sessionUser.role || "-";
+    drawerRole.innerText =
+      sessionUser.role || "-";
   }
 
   if(sessionUser.role === "OWNER"){
@@ -1769,7 +1804,7 @@ async function loadMasterForLogin(){
     console.error(error);
 
     tampilLoginStatus(
-      "❌ Gagal memuat data login.",
+      "⚠️ Data login belum berhasil dimuat. Silakan refresh halaman.",
       "error"
     );
 
