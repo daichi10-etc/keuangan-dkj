@@ -1255,7 +1255,16 @@ select:disabled{
       <div class="welcome-card"><div class="avatar" id="kasirAvatar">K</div><div class="welcome-copy"><small>Selamat datang,</small><strong id="kasirDashName">Kasir</strong><span>Dashboard operasional cabang</span></div><div class="role-badge">KASIR</div></div>
       <div class="kasir-note">Cabang yang tampil otomatis mengikuti akses akun: <span id="kasirDashCabang" class="kasir-branch">-</span></div>
       <div class="card chart-filter"><div class="card-title"><span>Periode</span></div><div class="chart-filter-grid"><div><label>Mulai</label><input id="kasirChartStart" type="date"></div><div><label>Sampai</label><input id="kasirChartEnd" type="date"></div><div><label>Cabang</label><select id="kasirChartCabang" disabled></select></div></div><button class="main-btn" type="button" onclick="muatGrafikKasir()">Tampilkan Grafik</button></div>
-      <div class="ratio-line"><div class="ratio-box"><span>Pendapatan</span><strong id="kasirTotalPendapatan">Rp 0</strong></div><div class="ratio-box"><span>Pengeluaran</span><strong id="kasirTotalPengeluaran">Rp 0</strong></div><div class="ratio-box"><span>Selisih</span><strong id="kasirSelisih">Rp 0</strong></div><div class="ratio-box"><span>Rasio Pengeluaran</span><strong id="kasirRasio">0%</strong></div></div>
+      <div class="total-card"><div class="total-label">Total Pendapatan</div><div class="total-number" id="kasirTotalPendapatan">Rp 0</div><div class="total-meta"><span id="kasirPeriodeLabel">Periode terpilih</span><span class="change-pill">Ringkasan periode</span></div></div>
+      <div class="money-grid">
+        <div class="money-card"><div class="money-icon green">▣</div><div class="money-copy"><span>Cash</span><strong id="kasirCash">Rp 0</strong></div></div>
+        <div class="money-card"><div class="money-icon blue">▤</div><div class="money-copy"><span>Transfer</span><strong id="kasirTransfer">Rp 0</strong></div></div>
+        <div class="money-card"><div class="money-icon purple">▦</div><div class="money-copy"><span>QRIS</span><strong id="kasirQR">Rp 0</strong></div></div>
+        <div class="money-card"><div class="money-icon orange">▣</div><div class="money-copy"><span>Marketplace</span><strong id="kasirMarketplace">Rp 0</strong></div></div>
+        <div class="money-card"><div class="money-icon red">▰</div><div class="money-copy"><span>Total Pengeluaran</span><strong id="kasirTotalPengeluaran">Rp 0</strong></div></div>
+        <div class="money-card"><div class="money-icon green">✓</div><div class="money-copy"><span>Sisa Cash</span><strong id="kasirSisaCash">Rp 0</strong></div></div>
+      </div>
+      <div class="ratio-line"><div class="ratio-box"><span>Selisih</span><strong id="kasirSelisih">Rp 0</strong></div><div class="ratio-box"><span>Rasio Pengeluaran</span><strong id="kasirRasio">0%</strong></div></div>
       <div class="chart-card"><div class="chart-title"><div><strong>Pendapatan</strong><span>Per hari pada periode yang dipilih</span></div></div><div id="kasirIncomeChart" class="chart-empty">Pilih periode</div></div>
       <div class="chart-card"><div class="chart-title"><div><strong>Pengeluaran</strong><span>Per hari pada periode yang dipilih</span></div></div><div id="kasirExpenseChart" class="chart-empty">Pilih periode</div></div>
       <button class="quick-detail" type="button" onclick="bukaRiwayat()">Cek Riwayat Transaksi →</button>
@@ -3461,6 +3470,13 @@ function applyChartSummary(prefix,s){
   document.getElementById(ids[1]).innerText=rupiahDash(exp);
   document.getElementById(ids[2]).innerText=rupiahDash(pend-exp);
   document.getElementById(ids[3]).innerText=(pend?((exp/pend)*100).toFixed(1):'0')+'%';
+  if(prefix==='kasir'){
+    setTextIfExists('kasirCash',rupiahDash(s.cash));
+    setTextIfExists('kasirTransfer',rupiahDash(s.transfer));
+    setTextIfExists('kasirQR',rupiahDash(s.qr));
+    setTextIfExists('kasirMarketplace',rupiahDash((s.grab||0)+(s.gojek||0)+(s.shopee||0)));
+    setTextIfExists('kasirSisaCash',rupiahDash(s.sisaCash));
+  }
 }
 async function muatGrafikDashboard(){
   if(!sessionUser||sessionUser.role!=="OWNER")return;
@@ -3499,6 +3515,7 @@ async function muatGrafikKasir(){
     const filter=(sessionUser.cabang||[]).length===1?(sessionUser.cabang[0]||''):'';
     const r=await requestMenu('dashboard_grafik',{tanggalMulai:start,tanggalSelesai:end,cabang:filter});
     applyChartSummary('kasir',r.summary||{});
+    setTextIfExists('kasirPeriodeLabel',`${start} s/d ${end}`);
     renderBarChart('kasirIncomeChart',r.data||[],'pendapatan');
     renderBarChart('kasirExpenseChart',r.data||[],'pengeluaran');
   }catch(err){
