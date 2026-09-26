@@ -920,6 +920,133 @@ select:disabled{
 @media(max-width:700px){.filter-grid{grid-template-columns:1fr}.rekap-grid{grid-template-columns:1fr 1fr}}
 
 .settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings-btn{padding:11px;border:1px solid var(--line);border-radius:11px;background:#fff;color:#4b4245;font-size:11px;font-weight:900}.settings-btn.primary{background:var(--red);color:#fff;border-color:var(--red)}.settings-btn.danger{color:#b42318;background:#fff0ee}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settings-user-card{padding:13px;border:1px solid var(--line);border-radius:14px;background:#fff}.settings-user-card.inactive{opacity:.62;background:#faf8f7}.settings-user-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.settings-user-name{font-size:13px;font-weight:900}.settings-badge{padding:5px 8px;border-radius:999px;font-size:8px;font-weight:900;background:#eaf8f1;color:#168a59}.settings-badge.off{background:#f1eeee;color:#8b7f82}.settings-meta{margin-top:5px;color:#777;font-size:9px;line-height:1.5}.settings-user-actions{display:flex;gap:6px;margin-top:10px}.settings-user-actions button{flex:1;padding:8px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:9px;font-weight:800}.settings-user-actions button.primary{color:var(--red);background:var(--red-soft);border-color:#f0c9cf}.settings-hidden{display:none}.settings-form-title{font-size:12px;font-weight:900;margin-bottom:4px}.settings-help{font-size:9px;color:#999;line-height:1.5}.settings-checks{display:grid;gap:7px;margin-top:7px}.settings-check{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#faf8f7;font-size:10px;font-weight:700}.settings-check input{width:auto}.settings-alert{display:none;margin-top:9px;padding:9px;border-radius:10px;font-size:10px;font-weight:800}.settings-alert.show{display:block}.settings-alert.success{background:#eaf8f1;color:#168a59}.settings-alert.error{background:#fff0ee;color:#b42318}@media(max-width:560px){.settings-grid{grid-template-columns:1fr}.settings-actions{grid-template-columns:1fr}}
+
+/* SETTINGS MENU / NAVIGATION */
+.settings-menu-grid{
+  display:grid;
+  gap:10px;
+  margin-top:4px;
+}
+.settings-menu-card,
+.settings-submenu-card{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+  color:var(--text);
+  text-align:left;
+  box-shadow:0 5px 18px rgba(67,36,40,.035);
+}
+.settings-menu-card:hover,
+.settings-submenu-card:hover{
+  border-color:#e7c2c8;
+  background:#fffafb;
+}
+.settings-menu-icon,
+.settings-submenu-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  flex:none;
+  border-radius:13px;
+  background:var(--red-soft);
+  font-size:19px;
+}
+.settings-menu-copy,
+.settings-submenu-card>div:nth-child(2){
+  flex:1;
+  min-width:0;
+}
+.settings-menu-copy strong,
+.settings-submenu-card strong{
+  display:block;
+  font-size:12px;
+  font-weight:900;
+}
+.settings-menu-copy span,
+.settings-submenu-card span{
+  display:block;
+  margin-top:3px;
+  color:#999;
+  font-size:9px;
+  line-height:1.4;
+}
+.settings-menu-arrow{
+  flex:none;
+  color:#aaa;
+  font-size:22px;
+  line-height:1;
+}
+.settings-section-panel,
+.settings-subpanel{
+  display:none;
+}
+.settings-section-panel.show,
+.settings-subpanel.show{
+  display:block;
+}
+.settings-back{
+  width:auto;
+  margin:0 0 12px;
+  padding:8px 0;
+  border:0;
+  background:none;
+  color:var(--red);
+  font-size:10px;
+  font-weight:900;
+}
+.settings-section-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:2px 0 13px;
+}
+.settings-section-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  color:var(--red);
+  background:var(--red-soft);
+  font-size:19px;
+}
+.settings-section-title strong{
+  display:block;
+  font-size:16px;
+}
+.settings-section-title span{
+  display:block;
+  margin-top:3px;
+  color:#999;
+  font-size:9px;
+}
+.settings-submenu-card{
+  margin-top:10px;
+}
+.settings-submenu-icon{
+  width:36px;
+  height:36px;
+  border-radius:11px;
+  font-size:16px;
+}
+.settings-add-user{
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  border:1px dashed #d75a6b;
+  border-radius:12px;
+  color:var(--red);
+  background:#fffafb;
+  font-size:11px;
+  font-weight:900;
+}
+
 </style>
 
 </head>
@@ -1304,57 +1431,191 @@ select:disabled{
 <!-- PENGATURAN -->
 <div id="pengaturanPage" class="page">
   <div class="app-shell">
-    <header class="app-header"><div class="header-left"><button class="icon-btn" onclick="bukaMenu()">☰</button><div class="header-brand-text"><strong>DEWILA</strong><span>PENGATURAN</span></div></div><button class="icon-btn" onclick="bukaDashboard()">⌂</button></header>
+    <header class="app-header">
+      <div class="header-left">
+        <button class="icon-btn" onclick="bukaMenu()">☰</button>
+        <div class="header-brand-text"><strong>DEWILA</strong><span>PENGATURAN</span></div>
+      </div>
+      <button class="icon-btn" onclick="bukaDashboard()">⌂</button>
+    </header>
+
     <main class="app-content">
-      <div class="page-title"><div class="page-title-icon">⚙</div><div><strong>Pengaturan</strong><span>Kelola akun, akses, dan master sistem</span></div></div>
-
-      <div class="card">
-        <div class="card-title"><span>Akun Saya</span></div>
-        <div class="settings-grid">
-          <div><label>Nama</label><input id="settingMyName" readonly></div>
-          <div><label>Role</label><input id="settingMyRole" readonly></div>
+      <div class="page-title">
+        <div class="page-title-icon">⚙</div>
+        <div>
+          <strong>Pengaturan</strong>
+          <span>Kelola akun, akses, dan master sistem</span>
         </div>
-        <label>Password Saat Ini</label><input id="settingOldPassword" type="password" placeholder="Masukkan password saat ini">
-        <div class="settings-grid">
-          <div><label>Password Baru</label><input id="settingNewPassword" type="password" placeholder="Minimal 4 karakter"></div>
-          <div><label>Ulangi Password Baru</label><input id="settingNewPassword2" type="password" placeholder="Ulangi password"></div>
+      </div>
+
+      <!-- MENU UTAMA SETTING -->
+      <div id="settingsHome" class="settings-menu-grid">
+
+        <button class="settings-menu-card" onclick="bukaSettingSection('akun')">
+          <div class="settings-menu-icon">👤</div>
+          <div class="settings-menu-copy">
+            <strong>Akun Saya</strong>
+            <span>Profil dan pengaturan password akun</span>
+          </div>
+          <span class="settings-menu-arrow">›</span>
+        </button>
+
+        <button id="settingsUserMenu" class="settings-menu-card" onclick="bukaSettingSection('user')">
+          <div class="settings-menu-icon">👥</div>
+          <div class="settings-menu-copy">
+            <strong>User & Akses</strong>
+            <span>Kelola pengguna, cabang, dan status akses</span>
+          </div>
+          <span class="settings-menu-arrow">›</span>
+        </button>
+
+        <button class="settings-menu-card" onclick="bukaSettingSection('master')">
+          <div class="settings-menu-icon">⚙️</div>
+          <div class="settings-menu-copy">
+            <strong>Master Sistem</strong>
+            <span>Cabang dan sumber pengeluaran</span>
+          </div>
+          <span class="settings-menu-arrow">›</span>
+        </button>
+
+      </div>
+
+      <!-- AKUN SAYA -->
+      <div id="settingsSectionAkun" class="settings-section-panel">
+        <button class="settings-back" onclick="kembaliKeSettingsMenu()">‹ Kembali ke Pengaturan</button>
+
+        <div class="settings-section-title">
+          <div class="settings-section-icon">👤</div>
+          <div>
+            <strong>Akun Saya</strong>
+            <span>Kelola informasi akun yang sedang login</span>
+          </div>
         </div>
-        <button class="main-btn" onclick="ubahPasswordSaya()">Simpan Password</button>
-        <div id="settingPasswordAlert" class="settings-alert"></div>
-      </div>
 
-      <div class="card">
-        <div class="card-title"><span>Cabang</span></div>
-        <div id="settingCabang" class="chip-list"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span>Sumber Pengeluaran</span></div>
-        <div id="settingSumber" class="chip-list"></div>
-      </div>
-
-      <div id="ownerSettingsArea" class="settings-hidden">
         <div class="card">
-          <div class="card-title"><span>User & Akses</span><span id="settingUserCount" class="settings-help"></span></div>
+          <div class="card-title"><span>Profil Saya</span></div>
+          <div class="settings-grid">
+            <div>
+              <label>Nama</label>
+              <input id="settingMyName" readonly>
+            </div>
+            <div>
+              <label>Role</label>
+              <input id="settingMyRole" readonly>
+            </div>
+          </div>
+        </div>
+
+        <button class="settings-submenu-card" onclick="bukaSettingSubSection('password')">
+          <div class="settings-submenu-icon">🔐</div>
+          <div>
+            <strong>Ganti Password</strong>
+            <span>Ubah password akun saya</span>
+          </div>
+          <span class="settings-menu-arrow">›</span>
+        </button>
+
+        <div id="settingsPasswordPanel" class="settings-subpanel">
+          <div class="card">
+            <div class="card-title"><span>Ganti Password</span></div>
+            <label>Password Saat Ini</label>
+            <input id="settingOldPassword" type="password" placeholder="Masukkan password saat ini">
+            <div class="settings-grid">
+              <div>
+                <label>Password Baru</label>
+                <input id="settingNewPassword" type="password" placeholder="Minimal 4 karakter">
+              </div>
+              <div>
+                <label>Ulangi Password Baru</label>
+                <input id="settingNewPassword2" type="password" placeholder="Ulangi password">
+              </div>
+            </div>
+            <button class="main-btn" onclick="ubahPasswordSaya()">Simpan Password</button>
+            <div id="settingPasswordAlert" class="settings-alert"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER & AKSES -->
+      <div id="settingsSectionUser" class="settings-section-panel">
+        <button class="settings-back" onclick="kembaliKeSettingsMenu()">‹ Kembali ke Pengaturan</button>
+
+        <div class="settings-section-title">
+          <div class="settings-section-icon">👥</div>
+          <div>
+            <strong>User & Akses</strong>
+            <span>Kelola pengguna dan akses sistem</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Daftar User</span>
+            <span id="settingUserCount" class="settings-help"></span>
+          </div>
           <div id="settingUsers" class="settings-users"></div>
         </div>
 
+        <button class="settings-add-user" onclick="bukaFormTambahUser()">＋ Tambah User Baru</button>
+
+        <div id="settingsUserFormPanel" class="settings-subpanel">
+          <div class="card">
+            <div class="settings-form-title" id="userFormTitle">Tambah User</div>
+            <div class="settings-help">
+              User tidak dihapus agar riwayat transaksi tetap aman. Gunakan AKTIF/NONAKTIF untuk mengatur akses.
+            </div>
+
+            <input type="hidden" id="settingEditName">
+
+            <label>Nama User</label>
+            <input id="settingUserName" placeholder="Contoh: IMAM">
+
+            <div class="settings-grid">
+              <div>
+                <label>Role</label>
+                <select id="settingUserRole">
+                  <option value="KASIR">KASIR</option>
+                  <option value="OWNER">OWNER</option>
+                </select>
+              </div>
+              <div>
+                <label>Password</label>
+                <input id="settingUserPassword" type="text" placeholder="Password user">
+              </div>
+            </div>
+
+            <label>Akses Cabang</label>
+            <div id="settingBranchChecks" class="settings-checks"></div>
+
+            <div class="settings-actions">
+              <button class="settings-btn primary" onclick="simpanUserSettings()">Simpan User</button>
+              <button class="settings-btn" onclick="resetFormUserSettings();tutupFormUserSettings()">Bersihkan</button>
+            </div>
+            <div id="settingUserAlert" class="settings-alert"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MASTER SISTEM -->
+      <div id="settingsSectionMaster" class="settings-section-panel">
+        <button class="settings-back" onclick="kembaliKeSettingsMenu()">‹ Kembali ke Pengaturan</button>
+
+        <div class="settings-section-title">
+          <div class="settings-section-icon">⚙️</div>
+          <div>
+            <strong>Master Sistem</strong>
+            <span>Informasi master yang digunakan sistem</span>
+          </div>
+        </div>
+
         <div class="card">
-          <div class="settings-form-title" id="userFormTitle">Tambah User</div>
-          <div class="settings-help">User tidak dihapus agar riwayat transaksi tetap aman. Gunakan AKTIF/NONAKTIF untuk mengatur akses.</div>
-          <input type="hidden" id="settingEditName">
-          <label>Nama User</label><input id="settingUserName" placeholder="Contoh: IMAM">
-          <div class="settings-grid">
-            <div><label>Role</label><select id="settingUserRole"><option value="KASIR">KASIR</option><option value="OWNER">OWNER</option></select></div>
-            <div><label>Password</label><input id="settingUserPassword" type="text" placeholder="Password user"></div>
-          </div>
-          <label>Akses Cabang</label>
-          <div id="settingBranchChecks" class="settings-checks"></div>
-          <div class="settings-actions">
-            <button class="settings-btn primary" onclick="simpanUserSettings()">Simpan User</button>
-            <button class="settings-btn" onclick="resetFormUserSettings()">Bersihkan</button>
-          </div>
-          <div id="settingUserAlert" class="settings-alert"></div>
+          <div class="card-title"><span>Cabang</span></div>
+          <div id="settingCabang" class="chip-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>Sumber Pengeluaran</span></div>
+          <div id="settingSumber" class="chip-list"></div>
         </div>
       </div>
 
@@ -3137,16 +3398,79 @@ async function muatLaporanCabang(){
   const list=document.getElementById("cabangList");try{const r=await requestMenu("laporan_cabang",{tanggal:document.getElementById("cabangTanggal").value,cabang:document.getElementById("cabangFilter").value});document.getElementById("cabangSummary").innerText=`${r.summary.totalCabang} cabang • Pendapatan ${rupiahDash(r.summary.totalPendapatan)} • Pengeluaran ${rupiahDash(r.summary.totalPengeluaran)} • Sisa cash ${rupiahDash(r.summary.totalSisaCash)}`;list.innerHTML="";if(!r.data?.length){list.innerHTML='<div class="empty-state">Belum ada transaksi pada tanggal tersebut.</div>';return;}r.data.forEach(x=>list.insertAdjacentHTML("beforeend",`<div class="branch-row"><div class="branch-icon">${escapeHtml(x.cabang.charAt(0)||"D")}</div><div class="branch-copy"><strong>${escapeHtml(x.cabang)}</strong><span>Pendapatan • Pengeluaran ${rupiahDash(x.pengeluaran)}</span></div><div class="branch-value">${rupiahDash(x.pendapatan)}</div></div>`));}catch(err){list.innerHTML=`<div class="empty-state">${escapeHtml(err.message)}</div>`;}
 }
 async function bukaPengaturan(){
-  tutupMenu();if(!sessionUser){showPage("loginPage");return;}showPage("pengaturanPage");
+  tutupMenu();
+  if(!sessionUser){showPage("loginPage");return;}
+  showPage("pengaturanPage");
+
   document.getElementById("settingMyName").value=sessionUser.nama||"";
   document.getElementById("settingMyRole").value=sessionUser.role||"";
   document.getElementById("settingCabang").innerHTML=masterCabang.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join("");
   document.getElementById("settingSumber").innerHTML=sumberPengeluaran.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join("");
-  renderBranchChecks([]);
-  const ownerArea=document.getElementById("ownerSettingsArea");
-  if(sessionUser.role!=="OWNER"){ownerArea.classList.add("settings-hidden");return;}
-  ownerArea.classList.remove("settings-hidden");
-  try{const r=await requestMenu("manajemen_user",{});masterUsers=r.users||[];renderSettingsUsers();renderBranchChecks([]);}catch(err){showSettingsAlert("settingUserAlert",err.message,"error");}
+
+  document.getElementById("settingsHome").style.display="grid";
+  document.getElementById("settingsSectionAkun").classList.remove("show");
+  document.getElementById("settingsSectionUser").classList.remove("show");
+  document.getElementById("settingsSectionMaster").classList.remove("show");
+  document.getElementById("settingsPasswordPanel").classList.remove("show");
+  document.getElementById("settingsUserFormPanel").classList.remove("show");
+  resetFormUserSettings();
+
+  const ownerMenu=document.getElementById("settingsUserMenu");
+  if(sessionUser.role!=="OWNER"){
+    ownerMenu.style.display="none";
+    return;
+  }
+
+  ownerMenu.style.display="flex";
+  try{
+    const r=await requestMenu("manajemen_user",{});
+    masterUsers=r.users||[];
+    renderSettingsUsers();
+    renderBranchChecks([]);
+  }catch(err){
+    showSettingsAlert("settingUserAlert",err.message,"error");
+  }
+}
+
+function bukaSettingSection(section){
+  document.getElementById("settingsHome").style.display="none";
+  document.getElementById("settingsSectionAkun").classList.remove("show");
+  document.getElementById("settingsSectionUser").classList.remove("show");
+  document.getElementById("settingsSectionMaster").classList.remove("show");
+
+  if(section==="akun"){
+    document.getElementById("settingsSectionAkun").classList.add("show");
+  }else if(section==="user"){
+    if(sessionUser?.role!=="OWNER") return kembaliKeSettingsMenu();
+    document.getElementById("settingsSectionUser").classList.add("show");
+  }else if(section==="master"){
+    document.getElementById("settingsSectionMaster").classList.add("show");
+  }
+}
+
+function kembaliKeSettingsMenu(){
+  document.getElementById("settingsHome").style.display="grid";
+  document.getElementById("settingsSectionAkun").classList.remove("show");
+  document.getElementById("settingsSectionUser").classList.remove("show");
+  document.getElementById("settingsSectionMaster").classList.remove("show");
+  document.getElementById("settingsPasswordPanel").classList.remove("show");
+  document.getElementById("settingsUserFormPanel").classList.remove("show");
+}
+
+function bukaSettingSubSection(section){
+  if(section==="password"){
+    document.getElementById("settingsPasswordPanel").classList.toggle("show");
+  }
+}
+
+function bukaFormTambahUser(){
+  resetFormUserSettings();
+  document.getElementById("settingsUserFormPanel").classList.add("show");
+  document.getElementById("settingUserName").focus();
+}
+
+function tutupFormUserSettings(){
+  document.getElementById("settingsUserFormPanel").classList.remove("show");
 }
 
 function showSettingsAlert(id,msg,type){const el=document.getElementById(id);if(!el)return;el.innerText=msg;el.className="settings-alert show "+type;setTimeout(()=>{el.className="settings-alert";},3500);}
@@ -3168,7 +3492,15 @@ function renderSettingsUsers(){
 }
 function editUserSettings(encoded){
   const nama=decodeURIComponent(encoded),u=masterUsers.find(x=>x.nama===nama);if(!u)return;
-  document.getElementById("settingEditName").value=u.nama;document.getElementById("settingUserName").value=u.nama;document.getElementById("settingUserName").disabled=true;document.getElementById("settingUserRole").value=u.role||"KASIR";document.getElementById("settingUserPassword").value="";document.getElementById("userFormTitle").innerText="Edit User • "+u.nama;renderBranchChecks(u.cabang||[]);document.getElementById("settingUserName").scrollIntoView({behavior:"smooth",block:"center"});
+  document.getElementById("settingEditName").value=u.nama;
+  document.getElementById("settingUserName").value=u.nama;
+  document.getElementById("settingUserName").disabled=true;
+  document.getElementById("settingUserRole").value=u.role||"KASIR";
+  document.getElementById("settingUserPassword").value="";
+  document.getElementById("userFormTitle").innerText="Edit User • "+u.nama;
+  renderBranchChecks(u.cabang||[]);
+  document.getElementById("settingsUserFormPanel").classList.add("show");
+  document.getElementById("settingUserName").scrollIntoView({behavior:"smooth",block:"center"});
 }
 function resetFormUserSettings(){document.getElementById("settingEditName").value="";document.getElementById("settingUserName").value="";document.getElementById("settingUserName").disabled=false;document.getElementById("settingUserRole").value="KASIR";document.getElementById("settingUserPassword").value="";document.getElementById("userFormTitle").innerText="Tambah User";renderBranchChecks([]);}
 async function simpanUserSettings(){
@@ -3176,7 +3508,7 @@ async function simpanUserSettings(){
   if(!nama)return showSettingsAlert("settingUserAlert","Nama user wajib diisi.","error");
   if(role==="KASIR"&&!cabang.length)return showSettingsAlert("settingUserAlert","Pilih minimal satu cabang untuk KASIR.","error");
   if(!editName&&!password)return showSettingsAlert("settingUserAlert","Password user wajib diisi.","error");
-  try{const r=await requestMenu("simpan_user",{nama,role,password,cabang,editName});masterUsers=r.users||masterUsers;renderSettingsUsers();resetFormUserSettings();showSettingsAlert("settingUserAlert","User berhasil disimpan.","success");}catch(err){showSettingsAlert("settingUserAlert",err.message,"error");}
+  try{const r=await requestMenu("simpan_user",{nama,role,password,cabang,editName});masterUsers=r.users||masterUsers;renderSettingsUsers();resetFormUserSettings();tutupFormUserSettings();showSettingsAlert("settingUserAlert","User berhasil disimpan.","success");}catch(err){showSettingsAlert("settingUserAlert",err.message,"error");}
 }
 async function toggleUserStatus(encoded,status){const nama=decodeURIComponent(encoded);if(!confirm(`${status==="AKTIF"?"Aktifkan":"Nonaktifkan"} user ${nama}?`))return;try{const r=await requestMenu("status_user",{nama,status});masterUsers=r.users||masterUsers;renderSettingsUsers();showSettingsAlert("settingUserAlert",`Status ${nama} menjadi ${status}.`,"success");}catch(err){showSettingsAlert("settingUserAlert",err.message,"error");}}
 async function resetPasswordUserSettings(encoded){const nama=decodeURIComponent(encoded),password=prompt("Masukkan password baru untuk "+nama+":");if(password===null)return;if(password.length<4)return showSettingsAlert("settingUserAlert","Password minimal 4 karakter.","error");try{const r=await requestMenu("reset_password_user",{nama,password});masterUsers=r.users||masterUsers;renderSettingsUsers();showSettingsAlert("settingUserAlert","Password user berhasil direset.","success");}catch(err){showSettingsAlert("settingUserAlert",err.message,"error");}}
