@@ -915,6 +915,9 @@ select:disabled{
   .money-grid{grid-template-columns:1fr 1fr}
   .auth-card{padding:25px 20px}
 }
+
+.menu-filter{margin-bottom:14px}.filter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.filter-grid label{margin-top:0}.summary-card{margin:12px 0;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff}.history-list,.settings-users{display:grid;gap:10px}.history-item{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.history-top{display:flex;justify-content:space-between;gap:10px;font-weight:800}.history-item small{display:block;margin-top:5px;color:#777;line-height:1.5}.history-income{border-left:4px solid #188c55}.history-expense{border-left:4px solid #b42318}.empty-state{padding:20px;text-align:center;color:#888;border:1px dashed var(--line);border-radius:14px}.chip-list{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:8px 11px;border-radius:999px;background:#f4f0f1;color:#5e3d44;font-size:12px;font-weight:700}.settings-user{padding:12px;border:1px solid var(--line);border-radius:12px;display:flex;justify-content:space-between;gap:10px}.settings-user small{color:#777}.detail-list{display:grid;gap:8px}.detail-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}
+@media(max-width:700px){.filter-grid{grid-template-columns:1fr}.rekap-grid{grid-template-columns:1fr 1fr}}
 </style>
 
 </head>
@@ -1008,14 +1011,14 @@ select:disabled{
           <strong>Hari ini</strong>
           <span>Ringkasan keuangan harian</span>
         </div>
-        <select id="dashboardCabang">
+        <select id="dashboardCabang" onchange="muatDashboard()">
           <option>Semua Cabang</option>
         </select>
       </div>
 
       <div class="total-card">
         <div class="total-label">Total Pendapatan</div>
-        <div class="total-number">Rp 0</div>
+        <div class="total-number" id="dashTotal">Rp 0</div>
         <div class="total-meta">
           <span>Data hari ini</span>
           <span class="change-pill">Belum ada rekap</span>
@@ -1028,7 +1031,7 @@ select:disabled{
           <div class="money-icon green">▣</div>
           <div class="money-copy">
             <span>Cash</span>
-            <strong>Rp 0</strong>
+            <strong id="dashCash">Rp 0</strong>
           </div>
         </div>
 
@@ -1036,7 +1039,7 @@ select:disabled{
           <div class="money-icon blue">▤</div>
           <div class="money-copy">
             <span>Transfer</span>
-            <strong>Rp 0</strong>
+            <strong id="dashTransfer">Rp 0</strong>
           </div>
         </div>
 
@@ -1044,7 +1047,7 @@ select:disabled{
           <div class="money-icon purple">▦</div>
           <div class="money-copy">
             <span>QRIS</span>
-            <strong>Rp 0</strong>
+            <strong id="dashQR">Rp 0</strong>
           </div>
         </div>
 
@@ -1052,7 +1055,7 @@ select:disabled{
           <div class="money-icon orange">▣</div>
           <div class="money-copy">
             <span>Marketplace</span>
-            <strong>Rp 0</strong>
+            <strong id="dashMarketplace">Rp 0</strong>
           </div>
         </div>
 
@@ -1060,7 +1063,7 @@ select:disabled{
           <div class="money-icon red">▰</div>
           <div class="money-copy">
             <span>Total Pengeluaran</span>
-            <strong>Rp 0</strong>
+            <strong id="dashExpense">Rp 0</strong>
           </div>
         </div>
 
@@ -1068,55 +1071,21 @@ select:disabled{
           <div class="money-icon green">✓</div>
           <div class="money-copy">
             <span>Sisa Cash</span>
-            <strong>Rp 0</strong>
+            <strong id="dashSisaCash">Rp 0</strong>
           </div>
         </div>
 
       </div>
 
-      <button class="quick-detail" type="button">Lihat Detail Hari Ini →</button>
+      <button class="quick-detail" type="button" onclick="bukaRekapHarian()">Lihat Detail Hari Ini →</button>
 
       <div class="section-heading">
         <strong>Rekap per Cabang</strong>
-        <button type="button">Lihat Semua</button>
+        <button type="button" onclick="bukaLaporanCabang()">Lihat Semua</button>
       </div>
 
-      <div class="branch-list">
-        <div class="branch-row">
-          <div class="branch-icon">D</div>
-          <div class="branch-copy">
-            <strong>DEKAJE METRO</strong>
-            <span>Pendapatan hari ini</span>
-          </div>
-          <div class="branch-value">Rp 0</div>
-        </div>
-
-        <div class="branch-row">
-          <div class="branch-icon">D</div>
-          <div class="branch-copy">
-            <strong>DEKAJE WAY JEPARA</strong>
-            <span>Pendapatan hari ini</span>
-          </div>
-          <div class="branch-value">Rp 0</div>
-        </div>
-
-        <div class="branch-row">
-          <div class="branch-icon">R</div>
-          <div class="branch-copy">
-            <strong>RAWUUH 15A</strong>
-            <span>Pendapatan hari ini</span>
-          </div>
-          <div class="branch-value">Rp 0</div>
-        </div>
-
-        <div class="branch-row">
-          <div class="branch-icon">R</div>
-          <div class="branch-copy">
-            <strong>RAWUUH 16C</strong>
-            <span>Pendapatan hari ini</span>
-          </div>
-          <div class="branch-value">Rp 0</div>
-        </div>
+      <div class="branch-list" id="dashboardBranchList">
+        <div class="empty-state">Memuat rekap cabang...</div>
       </div>
 
     </main>
@@ -1290,6 +1259,60 @@ select:disabled{
   </div>
 </div>
 
+
+<!-- RIWAYAT -->
+<div id="riwayatPage" class="page">
+  <div class="app-shell">
+    <header class="app-header"><div class="header-left"><button class="icon-btn" onclick="bukaMenu()">☰</button><div class="header-brand-text"><strong>DEWILA</strong><span>RIWAYAT</span></div></div><button class="icon-btn" onclick="bukaDashboard()">⌂</button></header>
+    <main class="app-content">
+      <div class="page-title"><div class="page-title-icon">▤</div><div><strong>Riwayat Transaksi</strong><span>Semua pemasukan dan pengeluaran yang tercatat</span></div></div>
+      <div class="card menu-filter"><div class="filter-grid"><div><label>Mulai</label><input id="historyStart" type="date"></div><div><label>Sampai</label><input id="historyEnd" type="date"></div><div><label>Cabang</label><select id="historyCabang"></select></div></div><button class="main-btn" onclick="muatRiwayat()">Tampilkan Riwayat</button></div>
+      <div id="historySummary" class="summary-card">Belum dimuat.</div>
+      <div id="historyList" class="history-list"><div class="empty-state">Pilih tanggal lalu tampilkan riwayat.</div></div>
+    </main>
+  </div>
+</div>
+
+<!-- REKAP HARIAN -->
+<div id="rekapPage" class="page">
+  <div class="app-shell">
+    <header class="app-header"><div class="header-left"><button class="icon-btn" onclick="bukaMenu()">☰</button><div class="header-brand-text"><strong>DEWILA</strong><span>REKAP HARIAN</span></div></div><button class="icon-btn" onclick="bukaDashboard()">⌂</button></header>
+    <main class="app-content">
+      <div class="page-title"><div class="page-title-icon">▥</div><div><strong>Rekap Harian</strong><span>Ringkasan keuangan berdasarkan tanggal dan cabang</span></div></div>
+      <div class="card"><div class="filter-grid"><div><label>Tanggal</label><input id="rekapTanggal" type="date"></div><div><label>Cabang</label><select id="rekapCabang"></select></div></div><button class="main-btn" onclick="muatRekapHarian()">Hitung Rekap</button></div>
+      <div class="money-grid rekap-grid"><div class="money-card"><div class="money-copy"><span>Total Pendapatan</span><strong id="rekapPendapatan">Rp 0</strong></div></div><div class="money-card"><div class="money-copy"><span>Total Pengeluaran</span><strong id="rekapPengeluaran">Rp 0</strong></div></div><div class="money-card"><div class="money-copy"><span>Sisa Cash</span><strong id="rekapSisaCash">Rp 0</strong></div></div></div>
+      <div class="card"><div class="card-title"><span>Detail Metode Pembayaran</span></div><div id="rekapDetail" class="detail-list">Belum dimuat.</div></div>
+    </main>
+  </div>
+</div>
+
+<!-- LAPORAN CABANG -->
+<div id="cabangPage" class="page">
+  <div class="app-shell">
+    <header class="app-header"><div class="header-left"><button class="icon-btn" onclick="bukaMenu()">☰</button><div class="header-brand-text"><strong>DEWILA</strong><span>LAPORAN CABANG</span></div></div><button class="icon-btn" onclick="bukaDashboard()">⌂</button></header>
+    <main class="app-content">
+      <div class="page-title"><div class="page-title-icon">◫</div><div><strong>Laporan Cabang</strong><span>Perbandingan performa cabang pada tanggal yang dipilih</span></div></div>
+      <div class="card"><div class="filter-grid"><div><label>Tanggal</label><input id="cabangTanggal" type="date"></div><div><label>Cabang</label><select id="cabangFilter"></select></div></div><button class="main-btn" onclick="muatLaporanCabang()">Tampilkan Laporan</button></div>
+      <div id="cabangSummary" class="summary-card">Belum dimuat.</div>
+      <div id="cabangList" class="branch-list"><div class="empty-state">Pilih tanggal lalu tampilkan laporan.</div></div>
+    </main>
+  </div>
+</div>
+
+<!-- PENGATURAN -->
+<div id="pengaturanPage" class="page">
+  <div class="app-shell">
+    <header class="app-header"><div class="header-left"><button class="icon-btn" onclick="bukaMenu()">☰</button><div class="header-brand-text"><strong>DEWILA</strong><span>PENGATURAN</span></div></div><button class="icon-btn" onclick="bukaDashboard()">⌂</button></header>
+    <main class="app-content">
+      <div class="page-title"><div class="page-title-icon">⚙</div><div><strong>Pengaturan</strong><span>Master yang sedang digunakan sistem</span></div></div>
+      <div class="card"><div class="card-title"><span>Cabang</span></div><div id="settingCabang" class="chip-list"></div></div>
+      <div class="card"><div class="card-title"><span>Sumber Pengeluaran</span></div><div id="settingSumber" class="chip-list"></div></div>
+      <div class="card"><div class="card-title"><span>User Aktif</span></div><div id="settingUsers" class="settings-users"></div></div>
+      <div class="note">Pengaturan master belum mengubah spreadsheet dari halaman ini. Tahap ini hanya menampilkan konfigurasi aktif.</div>
+    </main>
+  </div>
+</div>
+
 <!-- DRAWER -->
 <div id="drawerOverlay" class="drawer-overlay" onclick="tutupMenu()"></div>
 
@@ -1312,19 +1335,19 @@ select:disabled{
     ⊕ Input Transaksi
   </button>
 
-  <button class="drawer-item" type="button">
+  <button class="drawer-item" type="button" onclick="bukaRiwayat()">
     ▤ Riwayat Transaksi
   </button>
 
-  <button class="drawer-item" type="button">
+  <button class="drawer-item" type="button" onclick="bukaRekapHarian()">
     ▥ Rekap Harian
   </button>
 
-  <button class="drawer-item" type="button">
+  <button class="drawer-item" type="button" onclick="bukaLaporanCabang()">
     ◫ Laporan Cabang
   </button>
 
-  <button class="drawer-item" type="button">
+  <button class="drawer-item" type="button" onclick="bukaPengaturan()">
     ⚙ Pengaturan
   </button>
 
@@ -2985,6 +3008,89 @@ function bukaDashboard(){
 function bukaTransaksiDariMenu(){
   tutupMenu();
   bukaFormTransaksi();
+}
+
+
+
+/* =========================================================
+   MENU DATA V2
+========================================================= */
+
+function tanggalHariIni(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function setDateDefault(id){const el=document.getElementById(id);if(el&&!el.value)el.value=tanggalHariIni();}
+function isiSelectCabang(id, allowAll=true){
+  const el=document.getElementById(id); if(!el)return;
+  el.innerHTML=allowAll?'<option value="">Semua Cabang</option>':'<option value="">Pilih cabang</option>';
+  const list=sessionUser?.role==="OWNER"?masterCabang:(sessionUser?.cabang||[]);
+  list.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;el.appendChild(o);});
+}
+function rupiahDash(n){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0);}
+
+async function requestMenu(tipe, extra={}){
+  const hasil=await kirimKeBackend(Object.assign({tipe},extra));
+  if(!hasil || hasil.success!==true) throw new Error(hasil?.message||"Data gagal dimuat.");
+  return hasil;
+}
+
+async function muatDashboard(){
+  if(!sessionUser)return;
+  try{
+    const cabang=document.getElementById("dashboardCabang")?.value||"";
+    const r=await requestMenu("dashboard",{cabang});
+    const p=r.pendapatan||{}, e=r.pengeluaran||{};
+    setTextIfExists("dashTotal",rupiahDash(p.total));
+    setTextIfExists("dashCash",rupiahDash(p.cash));
+    setTextIfExists("dashTransfer",rupiahDash(p.transfer));
+    setTextIfExists("dashQR",rupiahDash(p.qr));
+    setTextIfExists("dashMarketplace",rupiahDash((p.grab||0)+(p.gojek||0)+(p.shopee||0)));
+    setTextIfExists("dashExpense",rupiahDash(e.total));
+    setTextIfExists("dashSisaCash",rupiahDash(r.sisaCash));
+    const br=await requestMenu("laporan_cabang",{tanggal:tanggalHariIni()});
+    const box=document.getElementById("dashboardBranchList");
+    if(box){box.innerHTML="";if(!br.data?.length){box.innerHTML='<div class="empty-state">Belum ada transaksi hari ini.</div>';}else br.data.forEach(x=>{box.insertAdjacentHTML("beforeend",`<div class="branch-row"><div class="branch-icon">${escapeHtml(x.cabang.charAt(0)||"D")}</div><div class="branch-copy"><strong>${escapeHtml(x.cabang)}</strong><span>Pendapatan ${tanggalHariIni()}</span></div><div class="branch-value">${rupiahDash(x.pendapatan)}</div></div>`);});}
+  }catch(err){console.error(err);setTextIfExists("dashTotal","Gagal memuat");}
+}
+
+function bukaDashboard(){
+  tutupMenu();
+  if(!sessionUser){showPage("loginPage");return;}
+  if(sessionUser.role!=="OWNER"){bukaFormTransaksi();return;}
+  showPage("ownerPage");
+  isiSelectCabang("dashboardCabang",true);
+  muatDashboard();
+}
+function bukaRiwayat(){
+  tutupMenu(); if(!sessionUser){showPage("loginPage");return;}
+  showPage("riwayatPage"); setDateDefault("historyStart"); setDateDefault("historyEnd"); isiSelectCabang("historyCabang",true); muatRiwayat();
+}
+async function muatRiwayat(){
+  const list=document.getElementById("historyList"); if(!list)return;
+  list.innerHTML='<div class="empty-state">Memuat...</div>';
+  try{const r=await requestMenu("riwayat",{tanggalMulai:document.getElementById("historyStart").value,tanggalSelesai:document.getElementById("historyEnd").value,cabang:document.getElementById("historyCabang").value});const s=r.summary||{};document.getElementById("historySummary").innerText=`${s.transaksi||0} transaksi • Pendapatan ${rupiahDash(s.totalPendapatan)} • Pengeluaran ${rupiahDash(s.totalPengeluaran)}`;list.innerHTML="";if(!r.data?.length){list.innerHTML='<div class="empty-state">Tidak ada transaksi pada periode ini.</div>';return;}r.data.forEach(x=>{list.insertAdjacentHTML("beforeend",`<div class="history-item ${x.jenis==="PENDAPATAN"?"history-income":"history-expense"}"><div class="history-top"><span>${x.jenis}</span><strong>${rupiahDash(x.total)}</strong></div><small>${escapeHtml(x.tanggal)} • ${escapeHtml(x.cabang)} • ${escapeHtml(x.penginput)}</small><small>${escapeHtml(x.detail)}</small>${x.catatan?`<small>Catatan: ${escapeHtml(x.catatan)}</small>`:""}</div>`);});}catch(err){list.innerHTML=`<div class="empty-state">${escapeHtml(err.message)}</div>`;}
+}
+function bukaRekapHarian(){
+  tutupMenu(); if(!sessionUser){showPage("loginPage");return;} showPage("rekapPage");setDateDefault("rekapTanggal");isiSelectCabang("rekapCabang",true);muatRekapHarian();
+}
+async function muatRekapHarian(){
+  try{const r=await requestMenu("dashboard",{tanggal:document.getElementById("rekapTanggal").value,cabang:document.getElementById("rekapCabang").value});const p=r.pendapatan||{},e=r.pengeluaran||{};document.getElementById("rekapPendapatan").innerText=rupiahDash(p.total);document.getElementById("rekapPengeluaran").innerText=rupiahDash(e.total);document.getElementById("rekapSisaCash").innerText=rupiahDash(r.sisaCash);document.getElementById("rekapDetail").innerHTML=`<div class="detail-row"><span>Cash</span><strong>${rupiahDash(p.cash)}</strong></div><div class="detail-row"><span>Transfer</span><strong>${rupiahDash(p.transfer)}</strong></div><div class="detail-row"><span>QR</span><strong>${rupiahDash(p.qr)}</strong></div><div class="detail-row"><span>Grab + Gojek + Shopee</span><strong>${rupiahDash((p.grab||0)+(p.gojek||0)+(p.shopee||0))}</strong></div><div class="detail-row"><span>Pengeluaran CASH</span><strong>${rupiahDash(e.cash)}</strong></div><div class="detail-row"><span>Pengeluaran NON-CASH</span><strong>${rupiahDash((e.transfer||0)+(e.qr||0))}</strong></div>`;}catch(err){document.getElementById("rekapDetail").innerText=err.message;}
+}
+function bukaLaporanCabang(){
+  tutupMenu();if(!sessionUser){showPage("loginPage");return;}showPage("cabangPage");setDateDefault("cabangTanggal");isiSelectCabang("cabangFilter",true);muatLaporanCabang();
+}
+async function muatLaporanCabang(){
+  const list=document.getElementById("cabangList");try{const r=await requestMenu("laporan_cabang",{tanggal:document.getElementById("cabangTanggal").value,cabang:document.getElementById("cabangFilter").value});document.getElementById("cabangSummary").innerText=`${r.summary.totalCabang} cabang • Pendapatan ${rupiahDash(r.summary.totalPendapatan)} • Pengeluaran ${rupiahDash(r.summary.totalPengeluaran)} • Sisa cash ${rupiahDash(r.summary.totalSisaCash)}`;list.innerHTML="";if(!r.data?.length){list.innerHTML='<div class="empty-state">Belum ada transaksi pada tanggal tersebut.</div>';return;}r.data.forEach(x=>list.insertAdjacentHTML("beforeend",`<div class="branch-row"><div class="branch-icon">${escapeHtml(x.cabang.charAt(0)||"D")}</div><div class="branch-copy"><strong>${escapeHtml(x.cabang)}</strong><span>Pendapatan • Pengeluaran ${rupiahDash(x.pengeluaran)}</span></div><div class="branch-value">${rupiahDash(x.pendapatan)}</div></div>`));}catch(err){list.innerHTML=`<div class="empty-state">${escapeHtml(err.message)}</div>`;}
+}
+function bukaPengaturan(){
+  tutupMenu();if(!sessionUser){showPage("loginPage");return;}showPage("pengaturanPage");
+  document.getElementById("settingCabang").innerHTML=masterCabang.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join("");
+  document.getElementById("settingSumber").innerHTML=sumberPengeluaran.map(x=>`<span class="chip">${escapeHtml(x)}</span>`).join("");
+  document.getElementById("settingUsers").innerHTML=masterUsers.filter(x=>x.status==="AKTIF").map(x=>`<div class="settings-user"><strong>${escapeHtml(x.nama)}</strong><small>${escapeHtml(x.role||"")} • ${escapeHtml((x.cabang||[]).join(", ")||"SEMUA CABANG")}</small></div>`).join("");
 }
 
 function scrollKeAtas(){
