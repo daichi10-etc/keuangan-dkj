@@ -1982,6 +1982,12 @@ function masukAplikasi(){
 
     showPage("ownerPage");
 
+    // AUTO-LOAD DASHBOARD OWNER SETELAH LOGIN
+    isiSelectCabang("dashboardCabang", true);
+    muatDashboard();
+    setupChartFilter("chartStart", "chartEnd", "chartCabang");
+    muatGrafikDashboard();
+
   }else{
 
     bukaFormTransaksi();
