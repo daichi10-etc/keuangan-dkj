@@ -2706,360 +2706,140 @@ function hitungRingkasan(){
 async function kirimLaporan(){
 
   if(sedangMengirim){
-
     return;
-
   }
-
 
   const penginput =
     sessionUser ? sessionUser.nama : "";
 
-
   const cabang =
-    document.getElementById(
-      "cabang"
-    ).value;
-
+    document.getElementById("cabang").value;
 
   if(!penginput){
-
-    tampilStatus(
-      "⚠️ Silakan pilih nama penginput.",
-      "error"
-    );
-
+    tampilStatus("⚠️ Silakan pilih nama penginput.","error");
     return;
-
   }
-
 
   if(!cabang){
-
-    tampilStatus(
-      "⚠️ Silakan pilih cabang.",
-      "error"
-    );
-
+    tampilStatus("⚠️ Silakan pilih cabang.","error");
     return;
-
   }
 
-
   if(!sessionUser){
-
-    tampilStatus(
-      "⚠️ Sesi login tidak ditemukan. Silakan login kembali.",
-      "error"
-    );
-
+    tampilStatus("⚠️ Sesi login tidak ditemukan. Silakan login kembali.","error");
     logout();
-
     return;
-
   }
 
   userTerpilih = sessionUser;
-
 
   /* =======================================
      CEK AKSES USER
   ======================================= */
 
-  if(
-    userTerpilih.role !== "OWNER"
-  ){
+  if(userTerpilih.role !== "OWNER"){
 
     const punyaAkses =
-      (
-        userTerpilih.cabang || []
-      ).includes(cabang);
-
+      (userTerpilih.cabang || []).includes(cabang);
 
     if(!punyaAkses){
-
-      tampilStatus(
-        "❌ User tidak memiliki akses ke cabang ini.",
-        "error"
-      );
-
+      tampilStatus("❌ User tidak memiliki akses ke cabang ini.","error");
       return;
-
     }
-
   }
 
+  /* =======================================
+     KUMPULKAN PENGELUARAN
+     Belum ada data yang dikirim ke backend
+     sampai seluruh form lolos validasi.
+  ======================================= */
 
   const expenseItems =
-    document.querySelectorAll(
-      ".expense-item"
-    );
-
+    document.querySelectorAll(".expense-item");
 
   const pengeluaran = [];
 
-
-  for(
-    const item of expenseItems
-  ){
+  for(const item of expenseItems){
 
     const sumber =
-      item.querySelector(
-        ".expense-source"
-      ).value;
-
+      item.querySelector(".expense-source").value;
 
     const keperluan =
-      item.querySelector(
-        ".expense-name"
-      ).value.trim();
-
+      item.querySelector(".expense-name").value.trim();
 
     const metodePembayaran =
-      item.querySelector(
-        ".expense-method"
-      ).value;
-
+      item.querySelector(".expense-method").value;
 
     const nominal =
-      Number(
-        item.querySelector(
-          ".expense-amount"
-        ).value
-      ) || 0;
+      Number(item.querySelector(".expense-amount").value) || 0;
 
-
-    if(
-      !sumber &&
-      !keperluan &&
-      nominal === 0
-    ){
-
+    if(!sumber && !keperluan && nominal === 0){
       continue;
-
     }
-
 
     if(!sumber){
-
-      tampilStatus(
-        "⚠️ Pilih sumber untuk setiap pengeluaran.",
-        "error"
-      );
-
+      tampilStatus("⚠️ Pilih sumber untuk setiap pengeluaran.","error");
       return;
-
     }
-
 
     if(!keperluan){
-
-      tampilStatus(
-        "⚠️ Isi keperluan pengeluaran.",
-        "error"
-      );
-
+      tampilStatus("⚠️ Isi keperluan pengeluaran.","error");
       return;
-
     }
-
 
     if(nominal <= 0){
-
-      tampilStatus(
-        "⚠️ Isi nominal pengeluaran dengan benar.",
-        "error"
-      );
-
+      tampilStatus("⚠️ Isi nominal pengeluaran dengan benar.","error");
       return;
-
     }
 
-
     pengeluaran.push({
-
-      sumber:
-        sumber,
-
-      keperluan:
-        keperluan,
-
-      metodePembayaran:
-        metodePembayaran,
-
-      nominal:
-        nominal
-
+      sumber: sumber,
+      keperluan: keperluan,
+      metodePembayaran: metodePembayaran,
+      nominal: nominal
     });
-
   }
 
-
-  sedangMengirim =
-    true;
-
+  sedangMengirim = true;
 
   const tombol =
-    document.getElementById(
-      "kirimBtn"
-    );
+    document.getElementById("kirimBtn");
 
-
-  tombol.disabled =
-    true;
-
-
-  tombol.innerText =
-    "⏳ MENGIRIM LAPORAN...";
-
+  tombol.disabled = true;
+  tombol.innerText = "⏳ MENYIMPAN TRANSAKSI...";
 
   tampilStatus(
-    "⏳ Laporan sedang dikirim, jangan tutup halaman.",
+    "⏳ Transaksi sedang diproses sebagai satu paket. Jangan tutup halaman.",
     "loading"
   );
 
-
-  let tahapTransaksi = "PEMASUKAN";
-  let pemasukanTersimpan = false;
-  const transactionIds = [];
-
   try{
 
-
-    /* =====================================
-       PEMASUKAN
-    ===================================== */
-
-    const pendapatanData = {
-
-      tipe:
-        "pemasukan",
-
-      penginput:
-        penginput,
-
-      cabang:
-        cabang,
-
-      cash:
-        angka("cash"),
-
-      transfer:
-        angka("transfer"),
-
-      qr:
-        angka("qr"),
-
-      grab:
-        angka("grab"),
-
-      gojek:
-        angka("gojek"),
-
-      shopee:
-        angka("shopee"),
-
-      catatan:
-        document.getElementById(
-          "catatan"
-        ).value.trim()
-
+    const transaksiData = {
+      tipe: "simpan_transaksi",
+      penginput: penginput,
+      cabang: cabang,
+      cash: angka("cash"),
+      transfer: angka("transfer"),
+      qr: angka("qr"),
+      grab: angka("grab"),
+      gojek: angka("gojek"),
+      shopee: angka("shopee"),
+      catatan: document.getElementById("catatan").value.trim(),
+      pengeluaran: pengeluaran
     };
 
+    const hasil =
+      await kirimKeBackend(transaksiData);
 
-    const hasilPendapatan =
-      await kirimKeBackend(
-        pendapatanData
-      );
-
-
-    if(
-      !hasilPendapatan.success
-    ){
-
-      throw new Error(
-        hasilPendapatan.message ||
-        "Pemasukan gagal disimpan"
-      );
-
+    if(!hasil.success){
+      throw new Error(hasil.message || "Transaksi gagal disimpan");
     }
 
-    pemasukanTersimpan = true;
-
-    if(hasilPendapatan.transactionId){
-      transactionIds.push(hasilPendapatan.transactionId);
-    }
-
-
-    /* =====================================
-       PENGELUARAN
-    ===================================== */
-
-    for(
-      const expense of pengeluaran
-    ){
-
-      tahapTransaksi = "PENGELUARAN";
-
-      const dataPengeluaran = {
-
-        tipe:
-          "pengeluaran",
-
-        penginput:
-          penginput,
-
-        cabang:
-          cabang,
-
-        sumber:
-          expense.sumber,
-
-        keperluan:
-          expense.keperluan,
-
-        metodePembayaran:
-          expense.metodePembayaran,
-
-        nominal:
-          expense.nominal,
-
-        catatan:
-          document.getElementById(
-            "catatan"
-          ).value.trim()
-
-      };
-
-
-      const hasilPengeluaran =
-        await kirimKeBackend(
-          dataPengeluaran
-        );
-
-
-      if(
-        !hasilPengeluaran.success
-      ){
-
-        throw new Error(
-          hasilPengeluaran.message ||
-          "Pengeluaran gagal disimpan"
-        );
-
-      }
-
-      if(hasilPengeluaran.transactionId){
-        transactionIds.push(hasilPengeluaran.transactionId);
-      }
-
-    }
-
-
-
-    /* =====================================
-       SUKSES
-    ===================================== */
+    const transactionIds =
+      Array.isArray(hasil.transactionIds)
+        ? hasil.transactionIds
+        : [];
 
     kosongkanForm();
 
@@ -3068,52 +2848,34 @@ async function kirimLaporan(){
       : "";
 
     tampilStatus(
-      `✅ TRANSAKSI BERHASIL — Laporan berhasil disimpan.${detailId}`,
+      `✅ TRANSAKSI BERHASIL — Seluruh transaksi tersimpan dalam satu proses.${detailId}`,
       "success"
     );
 
     bukaModalSukses();
 
-
   }catch(error){
 
-    console.error("GAGAL TRANSAKSI:",error);
+    console.error("GAGAL TRANSAKSI ATOMIK:", error);
 
     const pesanError =
       error && error.message
         ? error.message
         : "Terjadi kesalahan yang tidak diketahui.";
 
-    if(pemasukanTersimpan){
-      tampilStatus(
-        `⚠️ PEMASUKAN SUDAH TERSIMPAN — ${tahapTransaksi} gagal: ${pesanError}. Form tetap dipertahankan.`,
-        "error"
-      );
-    }else{
-      tampilStatus(
-        `❌ ${tahapTransaksi} GAGAL — ${pesanError}. Form tetap dipertahankan.`,
-        "error"
-      );
-    }
-
+    tampilStatus(
+      `❌ TRANSAKSI TIDAK TERSIMPAN — ${pesanError}. Data form tetap dipertahankan.`,
+      "error"
+    );
 
   }finally{
 
-    sedangMengirim =
-      false;
-
-
-    tombol.disabled =
-      false;
-
-
-    tombol.innerText =
-      "🚀 KIRIM LAPORAN";
-
+    sedangMengirim = false;
+    tombol.disabled = false;
+    tombol.innerText = "🚀 KIRIM LAPORAN";
   }
 
 }
-
 
 
 /* =========================================================
