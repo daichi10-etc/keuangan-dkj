@@ -2921,6 +2921,7 @@ async function kirimLaporan(){
 
   let tahapTransaksi = "PEMASUKAN";
   let pemasukanTersimpan = false;
+  const transactionIds = [];
 
   try{
 
@@ -2985,6 +2986,10 @@ async function kirimLaporan(){
 
     pemasukanTersimpan = true;
 
+    if(hasilPendapatan.transactionId){
+      transactionIds.push(hasilPendapatan.transactionId);
+    }
+
 
     /* =====================================
        PENGELUARAN
@@ -3044,6 +3049,10 @@ async function kirimLaporan(){
 
       }
 
+      if(hasilPengeluaran.transactionId){
+        transactionIds.push(hasilPengeluaran.transactionId);
+      }
+
     }
 
 
@@ -3054,8 +3063,12 @@ async function kirimLaporan(){
 
     kosongkanForm();
 
+    const detailId = transactionIds.length
+      ? ` ID: ${transactionIds.join(" • ")}`
+      : "";
+
     tampilStatus(
-      "✅ TRANSAKSI BERHASIL — Laporan berhasil disimpan.",
+      `✅ TRANSAKSI BERHASIL — Laporan berhasil disimpan.${detailId}`,
       "success"
     );
 
