@@ -1982,12 +1982,6 @@ function masukAplikasi(){
 
     showPage("ownerPage");
 
-    // AUTO-LOAD DASHBOARD OWNER SETELAH LOGIN
-    isiSelectCabang("dashboardCabang", true);
-    muatDashboard();
-    setupChartFilter("chartStart", "chartEnd", "chartCabang");
-    muatGrafikDashboard();
-
   }else{
 
     bukaFormTransaksi();
@@ -2919,11 +2913,14 @@ async function kirimLaporan(){
   );
 
 
+  let tahapTransaksi = "PEMASUKAN";
+  let pemasukanTersimpan = false;
+
   try{
 
 
     /* =====================================
-       PENDAPATAN
+       PEMASUKAN
     ===================================== */
 
     const pendapatanData = {
@@ -2975,11 +2972,12 @@ async function kirimLaporan(){
 
       throw new Error(
         hasilPendapatan.message ||
-        "Pendapatan gagal disimpan"
+        "Pemasukan gagal disimpan"
       );
 
     }
 
+    pemasukanTersimpan = true;
 
 
     /* =====================================
@@ -2989,6 +2987,8 @@ async function kirimLaporan(){
     for(
       const expense of pengeluaran
     ){
+
+      tahapTransaksi = "PENGELUARAN";
 
       const dataPengeluaran = {
 
@@ -3058,13 +3058,24 @@ async function kirimLaporan(){
 
   }catch(error){
 
-    console.error(error);
+    console.error("GAGAL TRANSAKSI:",error);
 
+    const pesanError =
+      error && error.message
+        ? error.message
+        : "Terjadi kesalahan yang tidak diketahui.";
 
-    tampilStatus(
-      "❌ TRANSAKSI GAGAL — Data belum berhasil disimpan. Form tetap dipertahankan.",
-      "error"
-    );
+    if(pemasukanTersimpan){
+      tampilStatus(
+        `⚠️ PEMASUKAN SUDAH TERSIMPAN — ${tahapTransaksi} gagal: ${pesanError}. Form tetap dipertahankan.`,
+        "error"
+      );
+    }else{
+      tampilStatus(
+        `❌ ${tahapTransaksi} GAGAL — ${pesanError}. Form tetap dipertahankan.`,
+        "error"
+      );
+    }
 
 
   }finally{
