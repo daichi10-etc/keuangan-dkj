@@ -1059,6 +1059,8 @@ select:disabled{
 </style>
 
 <style id="owner-ledger-style">
+
+.finance-account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.finance-account{padding:13px;border:1px solid var(--line);border-radius:14px;background:#fff;min-width:0}.finance-account .fa-name{font-size:11px;color:#70656a;line-height:1.4}.finance-account .fa-balance{font-size:16px;font-weight:900;margin-top:7px;overflow-wrap:anywhere}.finance-account .fa-meta{font-size:10px;color:#8b7d82;margin-top:5px}.finance-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.finance-kpi{padding:12px;border-radius:13px;background:#f8f2f3;border:1px solid #f0e1e4}.finance-kpi span{font-size:10px;color:#786b70;display:block}.finance-kpi strong{font-size:14px;display:block;margin-top:6px;overflow-wrap:anywhere}.finance-note{padding:12px;border-radius:12px;background:#fff8e8;color:#76541b;font-size:11px;line-height:1.6;margin:10px 0}.finance-row{padding:12px;border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#fff}.finance-row small{display:block;color:#82757a;line-height:1.5;margin-top:4px}.finance-row-top{display:flex;justify-content:space-between;gap:10px}.finance-row-top strong{overflow-wrap:anywhere}.finance-row-amount{font-weight:900;white-space:nowrap}.finance-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.finance-form-grid>div{min-width:0}.finance-form-grid label{display:block}.finance-form-grid input,.finance-form-grid select{width:100%;box-sizing:border-box}@media(max-width:700px){.finance-account-grid{grid-template-columns:1fr 1fr}.finance-kpis{grid-template-columns:1fr}.finance-form-grid{grid-template-columns:1fr}.finance-account .fa-balance{font-size:14px}}
 .owner-ledger-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.owner-ledger-tabs button{padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#66565a;font-weight:800;font-size:11px}.owner-ledger-tabs button.active{background:#f8e9ec;border-color:#d78a96;color:#a9172b}.owner-ledger-panel{display:none}.owner-ledger-panel.active{display:block}.ledger-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.ledger-kpi{padding:12px;border:1px solid var(--line);border-radius:13px;background:#fff;min-width:0}.ledger-kpi span{display:block;font-size:10px;color:#777}.ledger-kpi strong{display:block;font-size:13px;margin-top:5px;overflow-wrap:anywhere}.ledger-row{padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff;margin:9px 0}.ledger-row-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.ledger-row small{display:block;color:#777;font-size:10px;line-height:1.5;margin-top:5px}.ledger-amount{font-weight:900;white-space:nowrap}.ledger-status{display:inline-block;padding:4px 7px;border-radius:99px;font-size:9px;font-weight:900;background:#fff4dc;color:#8a5b00}.ledger-status.paid{background:#eaf8f1;color:#188a59}.owner-only-menu{display:none}@media(max-width:700px){.ledger-kpis{grid-template-columns:1fr}.ledger-kpi strong{font-size:14px}}
 </style>
 
@@ -1723,6 +1725,10 @@ select:disabled{
     ⚙ Pengaturan
   </button>
 
+  <button id="drawerFinance" class="drawer-item owner-only-menu" type="button" onclick="bukaFinanceOwner()">
+    💰 Finance / Arus Kas
+  </button>
+
   <button id="drawerTransaksiOwner" class="drawer-item owner-only-menu" type="button" onclick="bukaKeuanganOwner('transaksi')">
     💼 Transaksi Owner
   </button>
@@ -1736,6 +1742,52 @@ select:disabled{
   </button>
 
 </aside>
+
+<!-- OWNER FINANCE / CASHFLOW CONTROL -->
+<div id="financePage" class="page">
+  <div class="app-shell">
+    <header class="app-header"><div class="header-left"><button class="icon-btn" onclick="bukaMenu()">☰</button><div class="header-brand-text"><strong>DEWILA</strong><span>FINANCE / ARUS KAS</span></div></div><button class="icon-btn" onclick="bukaDashboard()">⌂</button></header>
+    <main class="app-content">
+      <div class="page-title"><div class="page-title-icon">💰</div><div><strong>Finance / Arus Kas</strong><span>Pantau uang yang benar-benar masih tersedia</span></div></div>
+      <div class="finance-note"><strong>Aturan anti double-counting:</strong> pendapatan tetap di PENDAPATAN, pengeluaran tetap di PENGELUARAN, pembayaran utang tetap di PEMBAYARAN_SUPPLIER. Finance membaca ketiganya. Menu ini hanya menambah mutasi untuk transfer, setoran, dan penarikan. Pengeluaran dari Finance masuk ke PENGELUARAN lama satu kali.</div>
+      <div class="finance-kpis">
+        <div class="finance-kpi"><span>Uang tersedia (kas + bank)</span><strong id="financeTotalTersedia">—</strong></div>
+        <div class="finance-kpi"><span>Saldo platform belum cair</span><strong id="financeTotalPending">—</strong></div>
+        <div class="finance-kpi"><span>Total saldo tercatat</span><strong id="financeTotalTercatat">—</strong></div>
+      </div>
+      <div id="financeMissingNote" class="finance-note">Memeriksa saldo awal...</div>
+      <div class="card">
+        <div class="card-title"><span>Saldo berjalan per akun</span><button type="button" class="remove-btn" onclick="muatDashboardFinanceUI()">↻ Refresh</button></div>
+        <div id="financeAccountGrid" class="finance-account-grid"><div class="empty-state">Memuat saldo...</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>Atur saldo awal akun</span></div>
+        <div class="note">Masukkan saldo nyata yang sudah ada tepat sebelum tanggal mulai. Setelah itu saldo hari berikutnya terbawa otomatis dari transaksi. Mengubah saldo awal akan menghitung ulang semua saldo setelah tanggal tersebut.</div>
+        <label>Akun</label><select id="financeOpeningAccount" onchange="financeLoadOpeningAccount()"><option value="">Memuat akun...</option></select>
+        <div class="finance-form-grid"><div><label>Tanggal mulai perhitungan</label><input id="financeOpeningDate" type="date"></div><div><label>Saldo awal (Rp)</label><input id="financeOpeningAmount" type="number" min="0" step="1" placeholder="0"></div></div>
+        <label>Catatan saldo awal (opsional)</label><input id="financeOpeningNote" placeholder="Contoh: saldo kas fisik saat mulai pakai Finance">
+        <button id="financeOpeningSave" class="main-btn" type="button" onclick="simpanSaldoAwalFinanceUI()">Simpan Saldo Awal</button><div id="financeOpeningStatus" class="status"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>Catat pergerakan uang</span></div>
+        <div class="note">Pengeluaran usaha dibayar dari kas/bank akan masuk laporan pengeluaran lama. Pengeluaran yang dibayar dari uang pribadi owner tetap tercatat sebagai beban, tetapi tidak mengurangi saldo kas usaha. Pencairan platform dicatat sebagai transfer, bukan pendapatan baru.</div>
+        <label>Jenis transaksi</label><select id="financeMoveType" onchange="financeUpdateMoveForm()"><option value="PENGELUARAN_USAHA">Pengeluaran usaha</option><option value="SETORAN_OWNER">Setoran owner ke usaha</option><option value="PENARIKAN_OWNER">Penarikan owner dari usaha</option><option value="TRANSFER_INTERNAL">Transfer antar akun usaha</option><option value="PENCAIRAN_PLATFORM">Pencairan saldo QRIS / Grab / Gojek / Shopee ke bank</option></select>
+        <div class="finance-form-grid"><div><label>Tanggal transaksi</label><input id="financeMoveDate" type="date"></div><div><label>Cabang terkait</label><select id="financeMoveBranch" onchange="financeUpdateMoveForm()"><option value="">Pilih cabang</option></select></div></div>
+        <label id="financeSourceLabel">Sumber dana</label><select id="financeSourceAccount" onchange="financeSyncBranchFromAccount();financeUpdateMoveForm(false)"><option value="">Pilih akun sumber</option></select>
+        <div id="financeDestinationWrap"><label id="financeDestinationLabel">Akun tujuan</label><select id="financeDestinationAccount"><option value="">Pilih akun tujuan</option></select></div>
+        <label>Kategori / keperluan</label><input id="financeMoveCategory" placeholder="Contoh: belanja pagi, gaji, pencairan QRIS">
+        <label>Nominal (Rp)</label><input id="financeMoveAmount" type="number" min="1" step="1" placeholder="0">
+        <label>Catatan / nomor bukti (opsional)</label><textarea id="financeMoveNote" placeholder="Catatan tambahan"></textarea>
+        <button id="financeMoveSave" class="main-btn" type="button" onclick="simpanMutasiFinanceUI()">Simpan Pergerakan Uang</button><div id="financeMoveStatus" class="status"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>Riwayat mutasi Finance</span></div>
+        <div class="finance-form-grid"><div><label>Dari tanggal</label><input id="financeHistoryStart" type="date"></div><div><label>Sampai tanggal</label><input id="financeHistoryEnd" type="date"></div></div>
+        <button class="main-btn" type="button" onclick="muatRiwayatFinanceUI()">Muat Riwayat</button><div id="financeHistoryList"><div class="empty-state">Pilih periode lalu muat riwayat.</div></div>
+      </div>
+    </main>
+  </div>
+</div>
 
 <!-- OWNER CASHFLOW & SUPPLIER LEDGER -->
 <div id="ownerLedgerPage" class="page">
@@ -2067,6 +2119,8 @@ function masukAplikasi(){
   if(drawerRekap) drawerRekap.style.display = isOwner ? "flex" : "none";
   if(drawerLaporan) drawerLaporan.style.display = isOwner ? "flex" : "none";
   if(drawerPengaturan) drawerPengaturan.style.display = isOwner ? "flex" : "none";
+  const drawerFinance = document.getElementById("drawerFinance");
+  if(drawerFinance) drawerFinance.style.display = isOwner ? "flex" : "none";
   const drawerTransaksiOwner = document.getElementById("drawerTransaksiOwner");
   const drawerUtangSupplier = document.getElementById("drawerUtangSupplier");
   if(drawerTransaksiOwner) drawerTransaksiOwner.style.display = isOwner ? "flex" : "none";
@@ -3804,6 +3858,73 @@ async function ubahPasswordSaya(){
 
 function scrollKeAtas(){
   window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* =========================================================
+   OWNER FINANCE / CASHFLOW UI
+========================================================= */
+let financeAccountsCache=[];
+function financeGuard(){if(!sessionUser||sessionUser.role!=="OWNER"){alert("Menu Finance khusus OWNER.");if(sessionUser)bukaFormTransaksi();else showPage("loginPage");return false;}return true;}
+function bukaFinanceOwner(){tutupMenu();if(!financeGuard())return;showPage("financePage");["financeOpeningDate","financeMoveDate","financeHistoryStart","financeHistoryEnd"].forEach(setDateDefault);isiSelectCabang("financeMoveBranch",false);muatDashboardFinanceUI();}
+function financeOpt(label,value){const o=document.createElement("option");o.value=value;o.textContent=label;return o;}
+function financePopulateAccountSelects(){
+  const opening=document.getElementById("financeOpeningAccount"),src=document.getElementById("financeSourceAccount"),dst=document.getElementById("financeDestinationAccount");
+  if(!opening||!src||!dst)return;
+  const oldOpen=opening.value,oldSrc=src.value,oldDst=dst.value;
+  opening.innerHTML="";opening.appendChild(financeOpt("Pilih akun saldo awal",""));
+  financeAccountsCache.forEach(a=>opening.appendChild(financeOpt(a.nama,a.id)));
+  src.innerHTML="";dst.innerHTML="";src.appendChild(financeOpt("Pilih akun sumber",""));dst.appendChild(financeOpt("Pilih akun tujuan",""));
+  const type=document.getElementById("financeMoveType").value,branch=document.getElementById("financeMoveBranch").value;
+  let srcList=[],dstList=[];
+  if(type==="PENGELUARAN_USAHA"){
+    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK_USAHA"||a.kelompok==="PENDING");srcList.push({id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"});
+  }else if(type==="SETORAN_OWNER"){
+    srcList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];dstList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK_USAHA");
+  }else if(type==="PENARIKAN_OWNER"){
+    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK_USAHA");dstList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];
+  }else{
+    srcList=financeAccountsCache.slice();dstList=financeAccountsCache.slice();
+    if(type==="PENCAIRAN_PLATFORM")srcList=financeAccountsCache.filter(a=>a.kelompok==="PENDING");
+  }
+  srcList.forEach(a=>src.appendChild(financeOpt(a.nama,a.id)));dstList.forEach(a=>dst.appendChild(financeOpt(a.nama,a.id)));
+  if([...opening.options].some(o=>o.value===oldOpen))opening.value=oldOpen;
+  if([...src.options].some(o=>o.value===oldSrc))src.value=oldSrc;
+  if([...dst.options].some(o=>o.value===oldDst))dst.value=oldDst;
+  document.getElementById("financeDestinationWrap").style.display=type==="PENGELUARAN_USAHA"?"none":"block";
+  document.getElementById("financeSourceLabel").textContent=type==="PENGELUARAN_USAHA"?"Dibayar dari akun":type==="SETORAN_OWNER"?"Sumber setoran":"Akun sumber";
+  document.getElementById("financeDestinationLabel").textContent=type==="SETORAN_OWNER"?"Uang masuk ke akun":type==="PENARIKAN_OWNER"?"Tujuan penarikan":"Akun tujuan";
+}
+function financeUpdateMoveForm(refreshSource=true){financePopulateAccountSelects();if(refreshSource)financeSyncBranchFromAccount();}
+function financeSyncBranchFromAccount(){const id=document.getElementById("financeSourceAccount").value;if(id.startsWith("KAS::")){const b=id.slice(5),el=document.getElementById("financeMoveBranch");if([...el.options].some(o=>o.value===b))el.value=b;}const note=document.getElementById("financeMoveNote");if(note&&["QRIS_PENDING","GRAB_PENDING","GOJEK_PENDING","SHOPEE_PENDING"].includes(id)&&!note.value.trim())note.placeholder="Contoh: biaya admin/komisi yang dipotong sebelum pencairan";else if(note)note.placeholder="Catatan tambahan (opsional)";}
+async function muatDashboardFinanceUI(){
+  if(!financeGuard())return;
+  const grid=document.getElementById("financeAccountGrid");grid.innerHTML='<div class="empty-state">Memuat saldo akun...</div>';
+  try{
+    const r=await requestMenu("finance_dashboard");financeAccountsCache=r.accounts||[];
+    setTextIfExists("financeTotalTersedia",rupiahDash(r.summary?.totalTersedia||0));setTextIfExists("financeTotalPending",rupiahDash(r.summary?.totalPending||0));setTextIfExists("financeTotalTercatat",rupiahDash(r.summary?.totalTercatat||0));
+    const missing=r.summary?.akunBelumDiatur||0;document.getElementById("financeMissingNote").textContent=missing?`Ada ${missing} akun belum punya saldo awal. Atur saldo awal setiap kas cabang, rekening bank, dan saldo platform yang ingin dipantau. Akun yang belum diatur tidak ikut total.`:(r.catatan||"Saldo berhasil dimuat.");
+    grid.innerHTML=financeAccountsCache.map(a=>`<div class="finance-account"><div class="fa-name">${escapeHtml(a.nama)}</div><div class="fa-balance">${a.terkonfigurasi?rupiahDash(a.saldo):"Belum diatur"}</div><div class="fa-meta">${a.terkonfigurasi?"Mulai "+escapeHtml(a.tanggalMulai):"Atur saldo awal dulu"}${a.kelompok==="PENDING"?" · saldo belum cair":""}</div></div>`).join("")||'<div class="empty-state">Belum ada akun yang bisa ditampilkan.</div>';
+    financePopulateAccountSelects();
+    const selected=document.getElementById("financeOpeningAccount").value;const account=financeAccountsCache.find(a=>a.id===selected);if(account&&account.terkonfigurasi){document.getElementById("financeOpeningDate").value=account.tanggalMulai;document.getElementById("financeOpeningAmount").value=account.saldoAwal;document.getElementById("financeOpeningNote").value=account.catatanSaldoAwal||"";}
+  }catch(e){grid.innerHTML=`<div class="empty-state">Gagal memuat Finance: ${escapeHtml(e.message||"error")}</div>`;}
+}
+function financeLoadOpeningAccount(){const id=document.getElementById("financeOpeningAccount").value,a=financeAccountsCache.find(x=>x.id===id);if(!a)return;document.getElementById("financeOpeningDate").value=a.terkonfigurasi?a.tanggalMulai:tanggalHariIni();document.getElementById("financeOpeningAmount").value=a.terkonfigurasi?a.saldoAwal:"";document.getElementById("financeOpeningNote").value=a.catatanSaldoAwal||"";}
+async function simpanSaldoAwalFinanceUI(){
+  if(!financeGuard())return;const btn=document.getElementById("financeOpeningSave"),payload={tipe:"finance_opening_set",akunId:document.getElementById("financeOpeningAccount").value,tanggalMulai:document.getElementById("financeOpeningDate").value,saldoAwal:document.getElementById("financeOpeningAmount").value,catatan:document.getElementById("financeOpeningNote").value.trim()};
+  if(!payload.akunId||!payload.tanggalMulai||payload.saldoAwal===""||Number(payload.saldoAwal)<0){ownerLedgerStatus("financeOpeningStatus","Pilih akun, tanggal mulai, dan saldo awal yang valid.","error");return;}
+  btn.disabled=true;ownerLedgerStatus("financeOpeningStatus","Menyimpan saldo awal...","loading");try{const r=await requestMenu("finance_opening_set",payload);ownerLedgerStatus("financeOpeningStatus",r.message,"success");await muatDashboardFinanceUI();}catch(e){ownerLedgerStatus("financeOpeningStatus",e.message,"error");}finally{btn.disabled=false;}
+}
+async function simpanMutasiFinanceUI(){
+  if(!financeGuard())return;const btn=document.getElementById("financeMoveSave"),type=document.getElementById("financeMoveType").value,payload={tipe:"finance_move_add",jenis:type,tanggal:document.getElementById("financeMoveDate").value,cabang:document.getElementById("financeMoveBranch").value,akunSumber:document.getElementById("financeSourceAccount").value,akunTujuan:document.getElementById("financeDestinationAccount").value,kategori:document.getElementById("financeMoveCategory").value.trim(),nominal:document.getElementById("financeMoveAmount").value,catatan:document.getElementById("financeMoveNote").value.trim()};
+  if(!payload.tanggal||!payload.akunSumber||!payload.kategori||!payload.nominal||Number(payload.nominal)<=0||(type!=="PENGELUARAN_USAHA"&&!payload.akunTujuan)){ownerLedgerStatus("financeMoveStatus","Lengkapi tanggal, akun sumber/tujuan, kategori, dan nominal.","error");return;}
+  if(payload.akunSumber===payload.akunTujuan){ownerLedgerStatus("financeMoveStatus","Akun sumber dan tujuan tidak boleh sama.","error");return;}
+  btn.disabled=true;ownerLedgerStatus("financeMoveStatus","Menyimpan pergerakan uang...","loading");try{const r=await requestMenu("finance_move_add",payload);ownerLedgerStatus("financeMoveStatus",r.message,"success");["financeMoveCategory","financeMoveAmount","financeMoveNote"].forEach(id=>document.getElementById(id).value="");await muatDashboardFinanceUI();await muatRiwayatFinanceUI();}catch(e){ownerLedgerStatus("financeMoveStatus",e.message,"error");}finally{btn.disabled=false;}
+}
+async function muatRiwayatFinanceUI(){
+  if(!financeGuard())return;const box=document.getElementById("financeHistoryList");box.innerHTML='<div class="empty-state">Memuat riwayat Finance...</div>';
+  try{const r=await requestMenu("finance_history",{tanggalMulai:document.getElementById("financeHistoryStart").value,tanggalSelesai:document.getElementById("financeHistoryEnd").value});const rows=r.data||[];if(!rows.length){box.innerHTML='<div class="empty-state">Belum ada mutasi Finance pada periode ini.</div>';return;}
+    box.innerHTML=rows.map(x=>`<div class="finance-row"><div class="finance-row-top"><strong>${escapeHtml(x.kategori||x.jenis)}</strong><span class="finance-row-amount">${rupiahDash(x.nominal)}</span></div><small>${escapeHtml(x.tanggal||"-")} · ${escapeHtml(x.jenis||"")}${x.cabang?" · "+escapeHtml(x.cabang):""}<br>${escapeHtml(x.sumberLabel||x.akunSumber||"")}${x.tujuanLabel?" → "+escapeHtml(x.tujuanLabel):""}${x.catatan?"<br>"+escapeHtml(x.catatan):""}<br>Input: ${escapeHtml(x.penginput||"-")}</small></div>`).join("");
+  }catch(e){box.innerHTML=`<div class="empty-state">Gagal memuat riwayat: ${escapeHtml(e.message||"error")}</div>`;}
 }
 
 /* =========================================================
