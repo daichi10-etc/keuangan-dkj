@@ -1771,7 +1771,7 @@ select:disabled{
       <div class="finance-note"><strong>Aturan anti double-counting:</strong> pendapatan tetap di PENDAPATAN, pengeluaran tetap di PENGELUARAN, pembayaran utang tetap di PEMBAYARAN_SUPPLIER. Finance membaca ketiganya. Menu ini hanya menambah mutasi untuk transfer, setoran, dan penarikan. Pengeluaran dari Finance masuk ke PENGELUARAN lama satu kali.</div>
       <div class="finance-kpis">
         <div class="finance-kpi"><span>Uang tersedia (kas + bank)</span><strong id="financeTotalTersedia">—</strong></div>
-        <div class="finance-kpi"><span>Saldo platform belum cair</span><strong id="financeTotalPending">—</strong></div>
+        
         <div class="finance-kpi"><span>Total saldo tercatat</span><strong id="financeTotalTercatat">—</strong></div>
       </div>
       <div id="financeMissingNote" class="finance-note">Memeriksa saldo awal...</div>
@@ -1789,8 +1789,8 @@ select:disabled{
       </div>
       <div class="card">
         <div class="card-title"><span>Catat pergerakan uang</span></div>
-        <div class="note">Pengeluaran usaha dibayar dari kas/bank akan masuk laporan pengeluaran lama. Pengeluaran yang dibayar dari uang pribadi owner tetap tercatat sebagai beban, tetapi tidak mengurangi saldo kas usaha. Pencairan platform dicatat sebagai transfer, bukan pendapatan baru.</div>
-        <label>Jenis transaksi</label><select id="financeMoveType" onchange="financeUpdateMoveForm()"><option value="PENGELUARAN_USAHA">Pengeluaran usaha</option><option value="SETORAN_OWNER">Setoran owner ke usaha</option><option value="PENARIKAN_OWNER">Penarikan owner dari usaha</option><option value="TRANSFER_INTERNAL">Transfer antar akun usaha</option><option value="PENCAIRAN_PLATFORM">Pencairan saldo QRIS / Grab / Gojek / Shopee ke bank</option></select>
+        <div class="note">Pengeluaran usaha dibayar dari kas/rekening akan masuk laporan pengeluaran lama. Pengeluaran dari uang pribadi owner tidak mengurangi saldo kas usaha. QRIS, Grab, Gojek, dan Shopee digabung ke rekening cabang sebagai saldo operasional termasuk pencairan berjalan; pencairan ke bank tidak dicatat lagi sebagai pemasukan.</div>
+        <label>Jenis transaksi</label><select id="financeMoveType" onchange="financeUpdateMoveForm()"><option value="PENGELUARAN_USAHA">Pengeluaran usaha</option><option value="SETORAN_OWNER">Setoran owner ke usaha</option><option value="PENARIKAN_OWNER">Penarikan owner dari usaha</option><option value="TRANSFER_INTERNAL">Transfer antar akun usaha</option></select>
         <div class="finance-form-grid"><div><label>Tanggal transaksi</label><input id="financeMoveDate" type="date"></div><div><label>Cabang terkait</label><select id="financeMoveBranch" onchange="financeUpdateMoveForm()"><option value="">Pilih cabang</option></select></div></div>
         <label id="financeSourceLabel">Sumber dana</label><select id="financeSourceAccount" onchange="financeSyncBranchFromAccount();financeUpdateMoveForm(false)"><option value="">Pilih akun sumber</option></select>
         <div id="financeDestinationWrap"><label id="financeDestinationLabel">Akun tujuan</label><select id="financeDestinationAccount"><option value="">Pilih akun tujuan</option></select></div>
@@ -3921,14 +3921,13 @@ function financePopulateAccountSelects(){
   const type=document.getElementById("financeMoveType").value,branch=document.getElementById("financeMoveBranch").value;
   let srcList=[],dstList=[];
   if(type==="PENGELUARAN_USAHA"){
-    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch||a.kelompok==="PENDING");srcList.push({id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"});
+    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch);srcList.push({id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"});
   }else if(type==="SETORAN_OWNER"){
     srcList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];dstList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch);
   }else if(type==="PENARIKAN_OWNER"){
     srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch);dstList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];
   }else{
     srcList=financeAccountsCache.slice();dstList=financeAccountsCache.slice();
-    if(type==="PENCAIRAN_PLATFORM")srcList=financeAccountsCache.filter(a=>a.kelompok==="PENDING");
   }
   srcList.forEach(a=>src.appendChild(financeOpt(a.nama,a.id)));dstList.forEach(a=>dst.appendChild(financeOpt(a.nama,a.id)));
   if([...opening.options].some(o=>o.value===oldOpen))opening.value=oldOpen;
@@ -3939,15 +3938,15 @@ function financePopulateAccountSelects(){
   document.getElementById("financeDestinationLabel").textContent=type==="SETORAN_OWNER"?"Uang masuk ke akun":type==="PENARIKAN_OWNER"?"Tujuan penarikan":"Akun tujuan";
 }
 function financeUpdateMoveForm(refreshSource=true){financePopulateAccountSelects();if(refreshSource)financeSyncBranchFromAccount();}
-function financeSyncBranchFromAccount(){const id=document.getElementById("financeSourceAccount").value;if(id.startsWith("KAS::")){const b=id.slice(5),el=document.getElementById("financeMoveBranch");if([...el.options].some(o=>o.value===b))el.value=b;}const note=document.getElementById("financeMoveNote");if(note&&["QRIS_PENDING","GRAB_PENDING","GOJEK_PENDING","SHOPEE_PENDING"].includes(id)&&!note.value.trim())note.placeholder="Contoh: biaya admin/komisi yang dipotong sebelum pencairan";else if(note)note.placeholder="Catatan tambahan (opsional)";}
+function financeSyncBranchFromAccount(){const id=document.getElementById("financeSourceAccount").value;if(id.startsWith("KAS::")||id.startsWith("BANK::")){const b=id.slice(id.indexOf("::")+2),el=document.getElementById("financeMoveBranch");if([...el.options].some(o=>o.value===b))el.value=b;}const note=document.getElementById("financeMoveNote");if(note)note.placeholder="Catatan tambahan (opsional)";}
 async function muatDashboardFinanceUI(){
   if(!financeGuard())return;
   const grid=document.getElementById("financeAccountGrid");grid.innerHTML='<div class="empty-state">Memuat saldo akun...</div>';
   try{
     const r=await requestMenu("finance_dashboard");financeAccountsCache=r.accounts||[];
-    setTextIfExists("financeTotalTersedia",rupiahDash(r.summary?.totalTersedia||0));setTextIfExists("financeTotalPending",rupiahDash(r.summary?.totalPending||0));setTextIfExists("financeTotalTercatat",rupiahDash(r.summary?.totalTercatat||0));
-    const missing=r.summary?.akunBelumDiatur||0;document.getElementById("financeMissingNote").textContent=missing?`Ada ${missing} akun belum punya saldo awal. Atur saldo awal untuk kas dan rekening masing-masing cabang. Saldo platform belum cair dipisahkan dari uang tersedia.`:(r.catatan||"Saldo berhasil dimuat.");
-    grid.innerHTML=financeAccountsCache.map(a=>`<div class="finance-account"><div class="fa-name">${escapeHtml(a.nama)}</div><div class="fa-balance">${a.terkonfigurasi?rupiahDash(a.saldo):"Belum diatur"}</div><div class="fa-meta">${a.terkonfigurasi?"Mulai "+escapeHtml(a.tanggalMulai):"Atur saldo awal dulu"}${a.kelompok==="PENDING"?" · saldo belum cair":""}</div></div>`).join("")||'<div class="empty-state">Belum ada akun yang bisa ditampilkan.</div>';
+    setTextIfExists("financeTotalTersedia",rupiahDash(r.summary?.totalTersedia||0));setTextIfExists("financeTotalTercatat",rupiahDash(r.summary?.totalTercatat||0));
+    const missing=r.summary?.akunBelumDiatur||0;document.getElementById("financeMissingNote").textContent=missing?`Ada ${missing} akun belum punya saldo awal. Atur saldo awal untuk kas dan rekening masing-masing cabang.`:(r.catatan||"Saldo berhasil dimuat.");
+    grid.innerHTML=financeAccountsCache.map(a=>`<div class="finance-account"><div class="fa-name">${escapeHtml(a.nama)}</div><div class="fa-balance">${a.terkonfigurasi?rupiahDash(a.saldo):"Belum diatur"}</div><div class="fa-meta">${a.terkonfigurasi?"Mulai "+escapeHtml(a.tanggalMulai):"Atur saldo awal dulu"}</div></div>`).join("")||'<div class="empty-state">Belum ada akun yang bisa ditampilkan.</div>';
     financePopulateAccountSelects();
     const selected=document.getElementById("financeOpeningAccount").value;const account=financeAccountsCache.find(a=>a.id===selected);if(account&&account.terkonfigurasi){document.getElementById("financeOpeningDate").value=account.tanggalMulai;document.getElementById("financeOpeningAmount").value=account.saldoAwal;document.getElementById("financeOpeningNote").value=account.catatanSaldoAwal||"";}
   }catch(e){grid.innerHTML=`<div class="empty-state">Gagal memuat Finance: ${escapeHtml(e.message||"error")}</div>`;}
