@@ -1849,9 +1849,10 @@ select:disabled{
         <div class="ledger-kpis"><div class="ledger-kpi"><span>Total tagihan</span><strong id="utangTotalTagihan">Rp 0</strong></div><div class="ledger-kpi"><span>Total dibayar</span><strong id="utangTotalDibayar">Rp 0</strong></div><div class="ledger-kpi"><span>Sisa utang</span><strong id="utangTotalSisa">Rp 0</strong></div></div>
         <div class="card">
           <div class="card-title"><span>Tambah Tagihan Supplier</span></div>
-          <div class="note">Satu tagihan dicatat sekali. Cicilan selanjutnya dicatat di bagian pembayaran, bukan sebagai tagihan baru.</div>
+          <div class="note">Pilih supplier yang sudah ada untuk menambah tagihan ke saldo supplier yang sama. Riwayat nota tetap disimpan per transaksi, tetapi total utangnya digabung per supplier. Cicilan dicatat lewat bagian pembayaran.</div>
           <label>Tanggal tagihan</label><input id="invTanggal" type="date">
-          <label>Nama supplier</label><input id="invSupplier" placeholder="Nama supplier">
+          <label>Pilih supplier</label><select id="invSupplierSelect" onchange="supplierToggleInput()"><option value="">Memuat daftar supplier...</option><option value="__NEW__">＋ Tambah supplier baru</option></select>
+          <div id="invSupplierNewWrap" style="display:none"><label>Nama supplier baru</label><input id="invSupplierNew" placeholder="Masukkan nama supplier baru"></div>
           <label>Cabang (opsional)</label><select id="invCabang"><option value="">Pilih cabang jika terkait</option></select>
           <label>Keterangan</label><input id="invKeterangan" placeholder="Contoh: pembelian kerang tanggal ...">
           <label>Nominal tagihan (Rp)</label><input id="invNominal" type="number" min="1" step="1" placeholder="0">
@@ -1862,7 +1863,8 @@ select:disabled{
         </div>
         <div class="card">
           <div class="card-title"><span>Catat Pembayaran / Cicilan</span></div>
-          <label>Pilih tagihan</label><select id="payInvoice"><option value="">Muat buku utang terlebih dahulu</option></select>
+          <div class="note">Pilih nama supplier, lalu masukkan nominal cicilan. Sistem mengalokasikan pembayaran ke nota tertua yang masih memiliki sisa utang, sampai nominal pembayaran terpenuhi.</div>
+          <label>Pilih supplier yang akan dibayar</label><select id="paySupplier"><option value="">Muat buku utang terlebih dahulu</option></select>
           <label>Tanggal pembayaran</label><input id="payTanggal" type="date">
           <label>Nominal pembayaran (Rp)</label><input id="payNominal" type="number" min="1" step="1" placeholder="0">
           <label>Sumber dana pembayaran</label><select id="paySumber"><option value="">Pilih sumber dana</option><option value="UANG_PRIBADI_OWNER">Uang pribadi owner</option><option value="KAS_USAHA">Kas usaha</option><option value="REKENING_USAHA">Rekening usaha</option><option value="LAINNYA">Lainnya</option></select>
@@ -4027,20 +4029,32 @@ async function muatTransaksiOwnerUI(){
     box.innerHTML=ownerTxData.map(x=>`<div class="ledger-row"><div class="ledger-row-top"><div><strong>${escapeHtml(x.kategori||x.jenis)}</strong><small>${escapeHtml(x.tanggal||"-")} · ${escapeHtml(x.jenis||"")} ${x.cabang?"· "+escapeHtml(x.cabang):""}</small></div><div class="ledger-amount">${rupiahDash(x.nominal)}</div></div><small>Sumber: ${escapeHtml(x.sumberDana||"-")} · ${escapeHtml(x.metodePembayaran||"-")}${x.penerima?"<br>Penerima: "+escapeHtml(x.penerima):""}${x.catatan?"<br>Catatan: "+escapeHtml(x.catatan):""}</small></div>`).join("");
   }catch(e){box.innerHTML=`<div class="empty-state">Gagal memuat: ${escapeHtml(e.message)}</div>`;}
 }
+function supplierKey_(name){return String(name||"").trim().replace(/\s+/g," ").toUpperCase();}
+function supplierNamesFromLedger_(){const map=new Map();(ownerLedgerData||[]).forEach(x=>{const key=supplierKey_(x.supplier);if(key&&!map.has(key))map.set(key,String(x.supplier||"").trim().replace(/\s+/g," "));});return [...map.entries()].map(([key,nama])=>({key,nama})).sort((a,b)=>a.nama.localeCompare(b.nama));}
+function supplierToggleInput(){const sel=document.getElementById("invSupplierSelect"),wrap=document.getElementById("invSupplierNewWrap");if(sel&&wrap)wrap.style.display=sel.value==="__NEW__"?"block":"none";}
+function supplierSelectedForInvoice_(){const sel=document.getElementById("invSupplierSelect");if(!sel)return "";return sel.value==="__NEW__"?document.getElementById("invSupplierNew").value.trim():sel.value;}
+function renderSupplierSelectors_(){
+  const names=supplierNamesFromLedger_();
+  const inv=document.getElementById("invSupplierSelect"), oldInv=inv?inv.value:"";
+  if(inv){inv.innerHTML='<option value="">Pilih supplier</option>'+names.map(x=>`<option value="${escapeHtml(x.nama)}">${escapeHtml(x.nama)}</option>`).join("")+'<option value="__NEW__">＋ Tambah supplier baru</option>';if([...inv.options].some(o=>o.value===oldInv))inv.value=oldInv;else inv.value="";supplierToggleInput();}
+  const pay=document.getElementById("paySupplier"),oldPay=pay?pay.value:"";
+  if(pay){const balances=new Map();(ownerLedgerData||[]).forEach(x=>{const k=supplierKey_(x.supplier);if(!k)return;const cur=balances.get(k)||{nama:x.supplier,sisa:0};cur.sisa+=Number(x.sisa)||0;balances.set(k,cur);});const open=[...balances.entries()].filter(([k,v])=>v.sisa>0).sort((a,b)=>a[1].nama.localeCompare(b[1].nama));pay.innerHTML='<option value="">Pilih supplier yang akan dibayar</option>'+open.map(([k,v])=>`<option value="${escapeHtml(v.nama)}">${escapeHtml(v.nama)} · sisa ${rupiahDash(v.sisa)}</option>`).join("");if([...pay.options].some(o=>supplierKey_(o.value)===supplierKey_(oldPay)))pay.value=[...pay.options].find(o=>supplierKey_(o.value)===supplierKey_(oldPay)).value;}
+}
+
 async function simpanTagihanSupplierUI(){
   if(!ownerLedgerGuard())return;
   const btn=document.getElementById("invSimpanBtn");
-  const payload={tipe:"supplier_invoice_add",tanggal:document.getElementById("invTanggal").value,supplier:document.getElementById("invSupplier").value.trim(),cabang:document.getElementById("invCabang").value,keterangan:document.getElementById("invKeterangan").value.trim(),nominal:document.getElementById("invNominal").value,jatuhTempo:document.getElementById("invJatuhTempo").value,catatan:document.getElementById("invCatatan").value.trim()};
-  if(!payload.supplier||!payload.nominal||Number(payload.nominal)<=0){ownerLedgerStatus("invStatus","Nama supplier dan nominal tagihan wajib diisi.","error");return;}
+  const payload={tipe:"supplier_invoice_add",tanggal:document.getElementById("invTanggal").value,supplier:supplierSelectedForInvoice_(),cabang:document.getElementById("invCabang").value,keterangan:document.getElementById("invKeterangan").value.trim(),nominal:document.getElementById("invNominal").value,jatuhTempo:document.getElementById("invJatuhTempo").value,catatan:document.getElementById("invCatatan").value.trim()};
+  if(!payload.supplier||payload.supplier==="__NEW__"||!payload.nominal||Number(payload.nominal)<=0){ownerLedgerStatus("invStatus","Pilih supplier atau isi nama supplier baru, lalu isi nominal tagihan.","error");return;}
   btn.disabled=true;ownerLedgerStatus("invStatus","Menyimpan tagihan...","loading");
-  try{const r=await requestMenu("supplier_invoice_add",payload);ownerLedgerStatus("invStatus",r.message||"Tagihan tersimpan.","success");["invSupplier","invKeterangan","invNominal","invJatuhTempo","invCatatan"].forEach(id=>document.getElementById(id).value="");await muatBukuUtangUI();}
+  try{const r=await requestMenu("supplier_invoice_add",payload);ownerLedgerStatus("invStatus",r.message||"Tagihan tersimpan.","success");document.getElementById("invSupplierSelect").value=payload.supplier;document.getElementById("invSupplierNew").value="";supplierToggleInput();["invKeterangan","invNominal","invJatuhTempo","invCatatan"].forEach(id=>document.getElementById(id).value="");await muatBukuUtangUI();}
   catch(e){ownerLedgerStatus("invStatus",e.message||"Gagal menyimpan tagihan.","error");}finally{btn.disabled=false;}
 }
 async function simpanPembayaranSupplierUI(){
   if(!ownerLedgerGuard())return;
   const btn=document.getElementById("paySimpanBtn");
-  const payload={tipe:"supplier_payment_add",invoiceId:document.getElementById("payInvoice").value,tanggal:document.getElementById("payTanggal").value,nominal:document.getElementById("payNominal").value,sumberDana:document.getElementById("paySumber").value,metodePembayaran:document.getElementById("payMetode").value,catatan:document.getElementById("payCatatan").value.trim()};
-  if(!payload.invoiceId||!payload.tanggal||!payload.nominal||Number(payload.nominal)<=0||!payload.sumberDana){ownerLedgerStatus("payStatus","Pilih tagihan, tanggal, nominal, dan sumber dana.","error");return;}
+  const payload={tipe:"supplier_payment_add",supplier:document.getElementById("paySupplier").value,tanggal:document.getElementById("payTanggal").value,nominal:document.getElementById("payNominal").value,sumberDana:document.getElementById("paySumber").value,metodePembayaran:document.getElementById("payMetode").value,catatan:document.getElementById("payCatatan").value.trim()};
+  if(!payload.supplier||!payload.tanggal||!payload.nominal||Number(payload.nominal)<=0||!payload.sumberDana){ownerLedgerStatus("payStatus","Pilih supplier, tanggal, nominal, dan sumber dana.","error");return;}
   btn.disabled=true;ownerLedgerStatus("payStatus","Menyimpan pembayaran...","loading");
   try{const r=await requestMenu("supplier_payment_add",payload);ownerLedgerStatus("payStatus",r.message||"Pembayaran tersimpan.","success");["payNominal","payCatatan"].forEach(id=>document.getElementById(id).value="");await muatBukuUtangUI();}
   catch(e){ownerLedgerStatus("payStatus",e.message||"Gagal menyimpan pembayaran.","error");}finally{btn.disabled=false;}
@@ -4050,10 +4064,10 @@ async function muatBukuUtangUI(){
   const box=document.getElementById("utangList");if(box)box.innerHTML='<div class="empty-state">Memuat buku utang...</div>';
   try{const r=await requestMenu("supplier_ledger");ownerLedgerData=r.data||[];
     setTextIfExists("utangTotalTagihan",rupiahDash(r.totalTagihan||0));setTextIfExists("utangTotalDibayar",rupiahDash(r.totalDibayar||0));setTextIfExists("utangTotalSisa",rupiahDash(r.totalSisa||0));
-    const sel=document.getElementById("payInvoice"),old=sel.value;sel.innerHTML='<option value="">Pilih tagihan yang akan dibayar</option>';
-    ownerLedgerData.filter(x=>Number(x.sisa)>0).forEach(x=>{const o=document.createElement("option");o.value=x.invoiceId;o.textContent=`${x.supplier} · sisa ${rupiahDash(x.sisa)} · ${x.tanggal}`;sel.appendChild(o);});if([...sel.options].some(o=>o.value===old))sel.value=old;
+    renderSupplierSelectors_();
     if(!ownerLedgerData.length){box.innerHTML='<div class="empty-state">Belum ada tagihan supplier. Tambahkan tagihan di atas.</div>';return;}
-    box.innerHTML=ownerLedgerData.map(x=>`<div class="ledger-row"><div class="ledger-row-top"><div><strong>${escapeHtml(x.supplier||"Supplier")}</strong><small>${escapeHtml(x.tanggal||"-")}${x.cabang?" · "+escapeHtml(x.cabang):""}${x.keterangan?"<br>"+escapeHtml(x.keterangan):""}${x.jatuhTempo?"<br>Jatuh tempo: "+escapeHtml(x.jatuhTempo):""}</small></div><span class="ledger-status ${Number(x.sisa)<=0?"paid":""}">${Number(x.sisa)<=0?"LUNAS":"BELUM LUNAS"}</span></div><div class="ledger-kpis"><div class="ledger-kpi"><span>Tagihan</span><strong>${rupiahDash(x.nominal)}</strong></div><div class="ledger-kpi"><span>Dibayar</span><strong>${rupiahDash(x.dibayar)}</strong></div><div class="ledger-kpi"><span>Sisa</span><strong>${rupiahDash(x.sisa)}</strong></div></div></div>`).join("");
+    const groups=new Map();ownerLedgerData.forEach(x=>{const key=supplierKey_(x.supplier);if(!key)return;if(!groups.has(key))groups.set(key,{supplier:x.supplier,nominal:0,dibayar:0,sisa:0,invoices:[]});const g=groups.get(key);g.nominal+=Number(x.nominal)||0;g.dibayar+=Number(x.dibayar)||0;g.sisa+=Number(x.sisa)||0;g.invoices.push(x);});
+    box.innerHTML=[...groups.values()].sort((a,b)=>a.supplier.localeCompare(b.supplier)).map(g=>`<div class="ledger-row"><div class="ledger-row-top"><div><strong>${escapeHtml(g.supplier)}</strong><small>${g.invoices.length} nota/tagihan · saldo supplier digabung</small></div><span class="ledger-status ${g.sisa<=0?"paid":""}">${g.sisa<=0?"LUNAS":"BELUM LUNAS"}</span></div><div class="ledger-kpis"><div class="ledger-kpi"><span>Total tagihan</span><strong>${rupiahDash(g.nominal)}</strong></div><div class="ledger-kpi"><span>Total dibayar</span><strong>${rupiahDash(g.dibayar)}</strong></div><div class="ledger-kpi"><span>Total sisa</span><strong>${rupiahDash(g.sisa)}</strong></div></div><details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Lihat rincian nota (${g.invoices.length})</summary>${g.invoices.slice().sort((a,b)=>String(a.tanggal).localeCompare(String(b.tanggal))).map(x=>`<div style="padding:10px 0;border-top:1px solid var(--border,#ddd)"><strong>${escapeHtml(x.tanggal||"-")} · ${rupiahDash(x.nominal)}</strong><small style="display:block">${escapeHtml(x.cabang||"Tanpa cabang")}${x.keterangan?" · "+escapeHtml(x.keterangan):""}${x.jatuhTempo?" · Jatuh tempo "+escapeHtml(x.jatuhTempo):""}</small><small style="display:block">Dibayar ${rupiahDash(x.dibayar)} · Sisa ${rupiahDash(x.sisa)}</small></div>`).join("")}</details></div>`).join("");
   }catch(e){box.innerHTML=`<div class="empty-state">Gagal memuat buku utang: ${escapeHtml(e.message)}</div>`;}
 }
 
