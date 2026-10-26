@@ -1867,8 +1867,9 @@ select:disabled{
           <label>Pilih supplier yang akan dibayar</label><select id="paySupplier"><option value="">Muat buku utang terlebih dahulu</option></select>
           <label>Tanggal pembayaran</label><input id="payTanggal" type="date">
           <label>Nominal pembayaran (Rp)</label><input id="payNominal" type="number" min="1" step="1" placeholder="0">
-          <label>Sumber dana pembayaran</label><select id="paySumber"><option value="">Pilih sumber dana</option><option value="UANG_PRIBADI_OWNER">Uang pribadi owner</option><option value="KAS_USAHA">Kas usaha</option><option value="REKENING_USAHA">Rekening usaha</option><option value="LAINNYA">Lainnya</option></select>
-          <label>Metode pembayaran</label><select id="payMetode"><option value="TRANSFER">Transfer</option><option value="CASH">Cash</option><option value="QR">QR</option><option value="LAINNYA">Lainnya</option></select>
+          <label>Sumber dana</label><select id="paySumber"><option value="">Pilih sumber dana</option><option value="KAS_USAHA">Uang usaha (kas/rekening cabang)</option><option value="UANG_PRIBADI_OWNER">Uang pribadi owner</option></select>
+          <label>Cabang sumber dana</label><select id="payCabang"><option value="">Pilih cabang yang membayar</option></select>
+          <label>Metode pembayaran</label><select id="payMetode"><option value="TRANSFER">Transfer / rekening</option><option value="CASH">Tunai / kas</option><option value="QR">QR dari rekening</option></select>
           <label>Catatan (opsional)</label><input id="payCatatan" placeholder="Referensi / catatan pembayaran">
           <button id="paySimpanBtn" class="main-btn" type="button" onclick="simpanPembayaranSupplierUI()">Simpan Pembayaran</button>
           <div id="payStatus" class="status"></div>
@@ -4000,7 +4001,7 @@ function bukaKeuanganOwner(tab="transaksi"){
   tutupMenu(); if(!ownerLedgerGuard())return;
   showPage("ownerLedgerPage");
   ["ownTanggal","ownMulai","ownSelesai","invTanggal","payTanggal"].forEach(setDateDefault);
-  isiCabangOwnerLedger("ownCabang"); isiCabangOwnerLedger("invCabang");
+  isiCabangOwnerLedger("ownCabang"); isiCabangOwnerLedger("invCabang"); isiCabangOwnerLedger("payCabang");
   pilihTabOwnerLedger(tab);
   if(tab==="utang")muatBukuUtangUI(); else muatTransaksiOwnerUI();
 }
@@ -4054,8 +4055,8 @@ async function simpanTagihanSupplierUI(){
 async function simpanPembayaranSupplierUI(){
   if(!ownerLedgerGuard())return;
   const btn=document.getElementById("paySimpanBtn");
-  const payload={tipe:"supplier_payment_add",supplier:document.getElementById("paySupplier").value,tanggal:document.getElementById("payTanggal").value,nominal:document.getElementById("payNominal").value,sumberDana:document.getElementById("paySumber").value,metodePembayaran:document.getElementById("payMetode").value,catatan:document.getElementById("payCatatan").value.trim()};
-  if(!payload.supplier||!payload.tanggal||!payload.nominal||Number(payload.nominal)<=0||!payload.sumberDana){ownerLedgerStatus("payStatus","Pilih supplier, tanggal, nominal, dan sumber dana.","error");return;}
+  const payload={tipe:"supplier_payment_add",supplier:document.getElementById("paySupplier").value,tanggal:document.getElementById("payTanggal").value,nominal:document.getElementById("payNominal").value,sumberDana:document.getElementById("paySumber").value,cabangSumberDana:document.getElementById("payCabang").value,metodePembayaran:document.getElementById("payMetode").value,catatan:document.getElementById("payCatatan").value.trim()};
+  if(!payload.supplier||!payload.tanggal||!payload.nominal||Number(payload.nominal)<=0||!payload.sumberDana||(payload.sumberDana==="KAS_USAHA"&&!payload.cabangSumberDana)){ownerLedgerStatus("payStatus","Pilih supplier, tanggal, nominal, sumber dana, dan cabang pembayar jika memakai uang usaha.","error");return;}
   btn.disabled=true;ownerLedgerStatus("payStatus","Menyimpan pembayaran...","loading");
   try{const r=await requestMenu("supplier_payment_add",payload);ownerLedgerStatus("payStatus",r.message||"Pembayaran tersimpan.","success");["payNominal","payCatatan"].forEach(id=>document.getElementById(id).value="");await muatBukuUtangUI();}
   catch(e){ownerLedgerStatus("payStatus",e.message||"Gagal menyimpan pembayaran.","error");}finally{btn.disabled=false;}
