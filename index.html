@@ -3921,11 +3921,11 @@ function financePopulateAccountSelects(){
   const type=document.getElementById("financeMoveType").value,branch=document.getElementById("financeMoveBranch").value;
   let srcList=[],dstList=[];
   if(type==="PENGELUARAN_USAHA"){
-    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK_USAHA"||a.kelompok==="PENDING");srcList.push({id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"});
+    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch||a.kelompok==="PENDING");srcList.push({id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"});
   }else if(type==="SETORAN_OWNER"){
-    srcList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];dstList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK_USAHA");
+    srcList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];dstList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch);
   }else if(type==="PENARIKAN_OWNER"){
-    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK_USAHA");dstList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];
+    srcList=financeAccountsCache.filter(a=>a.id==="KAS::"+branch||a.id==="BANK::"+branch);dstList=[{id:"OWNER_PRIBADI",nama:"Uang Pribadi Owner"}];
   }else{
     srcList=financeAccountsCache.slice();dstList=financeAccountsCache.slice();
     if(type==="PENCAIRAN_PLATFORM")srcList=financeAccountsCache.filter(a=>a.kelompok==="PENDING");
@@ -3946,7 +3946,7 @@ async function muatDashboardFinanceUI(){
   try{
     const r=await requestMenu("finance_dashboard");financeAccountsCache=r.accounts||[];
     setTextIfExists("financeTotalTersedia",rupiahDash(r.summary?.totalTersedia||0));setTextIfExists("financeTotalPending",rupiahDash(r.summary?.totalPending||0));setTextIfExists("financeTotalTercatat",rupiahDash(r.summary?.totalTercatat||0));
-    const missing=r.summary?.akunBelumDiatur||0;document.getElementById("financeMissingNote").textContent=missing?`Ada ${missing} akun belum punya saldo awal. Atur saldo awal setiap kas cabang, rekening bank, dan saldo platform yang ingin dipantau. Akun yang belum diatur tidak ikut total.`:(r.catatan||"Saldo berhasil dimuat.");
+    const missing=r.summary?.akunBelumDiatur||0;document.getElementById("financeMissingNote").textContent=missing?`Ada ${missing} akun belum punya saldo awal. Atur saldo awal untuk kas dan rekening masing-masing cabang. Saldo platform belum cair dipisahkan dari uang tersedia.`:(r.catatan||"Saldo berhasil dimuat.");
     grid.innerHTML=financeAccountsCache.map(a=>`<div class="finance-account"><div class="fa-name">${escapeHtml(a.nama)}</div><div class="fa-balance">${a.terkonfigurasi?rupiahDash(a.saldo):"Belum diatur"}</div><div class="fa-meta">${a.terkonfigurasi?"Mulai "+escapeHtml(a.tanggalMulai):"Atur saldo awal dulu"}${a.kelompok==="PENDING"?" · saldo belum cair":""}</div></div>`).join("")||'<div class="empty-state">Belum ada akun yang bisa ditampilkan.</div>';
     financePopulateAccountSelects();
     const selected=document.getElementById("financeOpeningAccount").value;const account=financeAccountsCache.find(a=>a.id===selected);if(account&&account.terkonfigurasi){document.getElementById("financeOpeningDate").value=account.tanggalMulai;document.getElementById("financeOpeningAmount").value=account.saldoAwal;document.getElementById("financeOpeningNote").value=account.catatanSaldoAwal||"";}
