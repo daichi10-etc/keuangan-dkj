@@ -1776,14 +1776,14 @@ select:disabled{
       </div>
       <div id="financeMissingNote" class="finance-note">Memeriksa saldo awal...</div>
       <div class="card">
-        <div class="card-title"><span>Saldo berjalan per akun</span><button type="button" class="remove-btn" onclick="muatDashboardFinanceUI()">↻ Refresh</button></div>
+        <div class="card-title"><span>Saldo berjalan per cabang</span><button type="button" class="remove-btn" onclick="muatDashboardFinanceUI()">↻ Refresh</button></div>
         <div id="financeAccountGrid" class="finance-account-grid"><div class="empty-state">Memuat saldo...</div></div>
       </div>
       <div class="card">
-        <div class="card-title"><span>Atur saldo awal akun</span></div>
-        <div class="note">Masukkan saldo nyata yang sudah ada tepat sebelum tanggal mulai. Setelah itu saldo hari berikutnya terbawa otomatis dari transaksi. Mengubah saldo awal akan menghitung ulang semua saldo setelah tanggal tersebut.</div>
-        <label>Akun</label><select id="financeOpeningAccount" onchange="financeLoadOpeningAccount()"><option value="">Memuat akun...</option></select>
-        <div class="finance-form-grid"><div><label>Tanggal mulai perhitungan</label><input id="financeOpeningDate" type="date"></div><div><label>Saldo awal (Rp)</label><input id="financeOpeningAmount" type="number" min="0" step="1" placeholder="0"></div></div>
+        <div class="card-title"><span>Atur saldo awal cabang</span></div>
+        <div class="note">Pilih satu cabang, lalu isi saldo kas tunai dan saldo rekening cabang tersebut sekaligus. Keduanya tetap dilacak terpisah di dalam satu cabang. Tanggal mulai berlaku untuk kedua saldo.</div>
+        <label>Cabang / lini usaha</label><select id="financeOpeningAccount" onchange="financeLoadOpeningAccount()"><option value="">Memuat cabang...</option></select>
+        <div class="finance-form-grid"><div><label>Tanggal mulai perhitungan</label><input id="financeOpeningDate" type="date"></div><div><label>Saldo kas tunai (Rp)</label><input id="financeOpeningCash" type="number" min="0" step="1" placeholder="0"></div><div><label>Saldo rekening (Rp)</label><input id="financeOpeningBank" type="number" min="0" step="1" placeholder="0"></div></div>
         <label>Catatan saldo awal (opsional)</label><input id="financeOpeningNote" placeholder="Contoh: saldo kas fisik saat mulai pakai Finance">
         <button id="financeOpeningSave" class="main-btn" type="button" onclick="simpanSaldoAwalFinanceUI()">Simpan Saldo Awal</button><div id="financeOpeningStatus" class="status"></div>
       </div>
@@ -3915,8 +3915,8 @@ function financePopulateAccountSelects(){
   const opening=document.getElementById("financeOpeningAccount"),src=document.getElementById("financeSourceAccount"),dst=document.getElementById("financeDestinationAccount");
   if(!opening||!src||!dst)return;
   const oldOpen=opening.value,oldSrc=src.value,oldDst=dst.value;
-  opening.innerHTML="";opening.appendChild(financeOpt("Pilih akun saldo awal",""));
-  financeAccountsCache.forEach(a=>opening.appendChild(financeOpt(a.nama,a.id)));
+  opening.innerHTML="";opening.appendChild(financeOpt("Pilih cabang / lini usaha",""));
+  [...new Set(financeAccountsCache.map(a=>a.cabang).filter(Boolean))].forEach(c=>opening.appendChild(financeOpt(c,"CABANG::"+c)));
   src.innerHTML="";dst.innerHTML="";src.appendChild(financeOpt("Pilih akun sumber",""));dst.appendChild(financeOpt("Pilih akun tujuan",""));
   const type=document.getElementById("financeMoveType").value,branch=document.getElementById("financeMoveBranch").value;
   let srcList=[],dstList=[];
@@ -3945,16 +3945,18 @@ async function muatDashboardFinanceUI(){
   try{
     const r=await requestMenu("finance_dashboard");financeAccountsCache=r.accounts||[];
     setTextIfExists("financeTotalTersedia",rupiahDash(r.summary?.totalTersedia||0));setTextIfExists("financeTotalTercatat",rupiahDash(r.summary?.totalTercatat||0));
-    const missing=r.summary?.akunBelumDiatur||0;document.getElementById("financeMissingNote").textContent=missing?`Ada ${missing} akun belum punya saldo awal. Atur saldo awal untuk kas dan rekening masing-masing cabang.`:(r.catatan||"Saldo berhasil dimuat.");
-    grid.innerHTML=financeAccountsCache.map(a=>`<div class="finance-account"><div class="fa-name">${escapeHtml(a.nama)}</div><div class="fa-balance">${a.terkonfigurasi?rupiahDash(a.saldo):"Belum diatur"}</div><div class="fa-meta">${a.terkonfigurasi?"Mulai "+escapeHtml(a.tanggalMulai):"Atur saldo awal dulu"}</div></div>`).join("")||'<div class="empty-state">Belum ada akun yang bisa ditampilkan.</div>';
+    const missing=r.summary?.akunBelumDiatur||0;const branches=[...new Set(financeAccountsCache.map(a=>a.cabang).filter(Boolean))];
+    const missingBranches=branches.filter(c=>!financeAccountsCache.some(a=>a.cabang===c&&a.terkonfigurasi)&&!financeAccountsCache.some(a=>a.cabang===c&&a.jenis==="KAS"&&a.terkonfigurasi&&financeAccountsCache.some(b=>b.cabang===c&&b.jenis==="BANK"&&b.terkonfigurasi))).length;
+    document.getElementById("financeMissingNote").textContent=missing?`Ada cabang yang saldo awal kas/rekeningnya belum lengkap. Pilih cabang lalu isi kedua saldo sekaligus.`:(r.catatan||"Saldo berhasil dimuat.");
+    grid.innerHTML=branches.map(c=>{const k=financeAccountsCache.find(a=>a.cabang===c&&a.jenis==="KAS"),b=financeAccountsCache.find(a=>a.cabang===c&&a.jenis==="BANK"),configured=!!(k&&b&&k.terkonfigurasi&&b.terkonfigurasi),total=configured?(Number(k.saldo||0)+Number(b.saldo||0)):null;return `<div class="finance-account"><div class="fa-name">${escapeHtml(c)}</div><div class="fa-balance">${configured?rupiahDash(total):"Saldo awal belum lengkap"}</div><div class="fa-meta">Kas tunai: ${k&&k.terkonfigurasi?rupiahDash(k.saldo):"Belum diatur"}<br>Rekening: ${b&&b.terkonfigurasi?rupiahDash(b.saldo):"Belum diatur"}<br>${configured?"Mulai "+escapeHtml(k.tanggalMulai):"Atur saldo kas dan rekening"}</div></div>`}).join("")||'<div class="empty-state">Belum ada cabang yang bisa ditampilkan.</div>';
     financePopulateAccountSelects();
-    const selected=document.getElementById("financeOpeningAccount").value;const account=financeAccountsCache.find(a=>a.id===selected);if(account&&account.terkonfigurasi){document.getElementById("financeOpeningDate").value=account.tanggalMulai;document.getElementById("financeOpeningAmount").value=account.saldoAwal;document.getElementById("financeOpeningNote").value=account.catatanSaldoAwal||"";}
+    financeLoadOpeningAccount();
   }catch(e){grid.innerHTML=`<div class="empty-state">Gagal memuat Finance: ${escapeHtml(e.message||"error")}</div>`;}
 }
-function financeLoadOpeningAccount(){const id=document.getElementById("financeOpeningAccount").value,a=financeAccountsCache.find(x=>x.id===id);if(!a)return;document.getElementById("financeOpeningDate").value=a.terkonfigurasi?a.tanggalMulai:tanggalHariIni();document.getElementById("financeOpeningAmount").value=a.terkonfigurasi?a.saldoAwal:"";document.getElementById("financeOpeningNote").value=a.catatanSaldoAwal||"";}
+function financeLoadOpeningAccount(){const selected=document.getElementById("financeOpeningAccount").value;if(!selected)return;const cabang=selected.startsWith("CABANG::")?selected.slice(8):selected,kas=financeAccountsCache.find(x=>x.cabang===cabang&&x.jenis==="KAS"),bank=financeAccountsCache.find(x=>x.cabang===cabang&&x.jenis==="BANK"),configured=!!(kas&&bank&&kas.terkonfigurasi&&bank.terkonfigurasi);document.getElementById("financeOpeningDate").value=configured?kas.tanggalMulai:tanggalHariIni();document.getElementById("financeOpeningCash").value=kas&&kas.terkonfigurasi?kas.saldoAwal:"";document.getElementById("financeOpeningBank").value=bank&&bank.terkonfigurasi?bank.saldoAwal:"";document.getElementById("financeOpeningNote").value=(kas&&kas.catatanSaldoAwal)|| (bank&&bank.catatanSaldoAwal)||"";}
 async function simpanSaldoAwalFinanceUI(){
-  if(!financeGuard())return;const btn=document.getElementById("financeOpeningSave"),payload={tipe:"finance_opening_set",akunId:document.getElementById("financeOpeningAccount").value,tanggalMulai:document.getElementById("financeOpeningDate").value,saldoAwal:document.getElementById("financeOpeningAmount").value,catatan:document.getElementById("financeOpeningNote").value.trim()};
-  if(!payload.akunId||!payload.tanggalMulai||payload.saldoAwal===""||Number(payload.saldoAwal)<0){ownerLedgerStatus("financeOpeningStatus","Pilih akun, tanggal mulai, dan saldo awal yang valid.","error");return;}
+  if(!financeGuard())return;const btn=document.getElementById("financeOpeningSave"),selected=document.getElementById("financeOpeningAccount").value,payload={tipe:"finance_opening_set",cabang:selected.startsWith("CABANG::")?selected.slice(8):"",tanggalMulai:document.getElementById("financeOpeningDate").value,saldoKas:document.getElementById("financeOpeningCash").value,saldoRekening:document.getElementById("financeOpeningBank").value,catatan:document.getElementById("financeOpeningNote").value.trim()};
+  if(!payload.cabang||!payload.tanggalMulai||payload.saldoKas===""||payload.saldoRekening===""||Number(payload.saldoKas)<0||Number(payload.saldoRekening)<0){ownerLedgerStatus("financeOpeningStatus","Pilih cabang, tanggal mulai, saldo kas, dan saldo rekening yang valid.","error");return;}
   btn.disabled=true;ownerLedgerStatus("financeOpeningStatus","Menyimpan saldo awal...","loading");try{const r=await requestMenu("finance_opening_set",payload);ownerLedgerStatus("financeOpeningStatus",r.message,"success");await muatDashboardFinanceUI();}catch(e){ownerLedgerStatus("financeOpeningStatus",e.message,"error");}finally{btn.disabled=false;}
 }
 async function simpanMutasiFinanceUI(){
